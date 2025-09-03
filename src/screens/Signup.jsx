@@ -5,7 +5,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-export default function Signup() {
+export default function Signup({ navigation }) {
   return (
     <View
       style={{ gap: wp('13%') }}
@@ -72,6 +72,7 @@ export default function Signup() {
           Send OTP
         </Text>
         <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
           style={{ padding: wp('3%') }}
           className="bg-[#DA7320] w-full flex justify-center items-center align-middle text-center rounded-xl"
         >
