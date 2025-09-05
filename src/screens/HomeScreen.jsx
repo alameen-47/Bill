@@ -18,6 +18,7 @@ import graph from '../assets/icons/graph.png';
 import settings from '../assets/icons/settings.png';
 import search from '../assets/icons/search.png';
 import logo from '../assets/images/logo.png';
+import NavigationBar from '../components/NavigationBar.jsx';
 import { TextInput } from 'react-native';
 export default function HomeScreen({ navigation }) {
   const size = wp('30%');
@@ -32,7 +33,6 @@ export default function HomeScreen({ navigation }) {
     { name: 'Watermelon', price: 20 },
     { name: 'Watermelon', price: 20 },
   ];
-
   return (
     <View
       style={{ padding: wp('4%') }}
@@ -66,6 +66,7 @@ export default function HomeScreen({ navigation }) {
         className="g flex flex-row justify-center align-middle items-center w-full "
       >
         <TouchableOpacity
+          onPress={() => navigation.navigate('NewBill')}
           style={{
             padding: wp('4%'),
             height: hp('auto'),
@@ -86,6 +87,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={() => navigation.navigate('NewBill')}
           style={{
             padding: wp('4%'),
             height: hp('auto'),
@@ -111,6 +113,7 @@ export default function HomeScreen({ navigation }) {
         className="flex flex-row justify-center align-middle items-center w-full "
       >
         <TouchableOpacity
+          onPress={() => navigation.navigate('Products')}
           style={{
             padding: wp('4%'),
             height: hp('auto'),
@@ -131,6 +134,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={() => navigation.navigate('Reports')}
           style={{
             padding: wp('4%'),
             height: hp('auto'),
@@ -206,11 +210,9 @@ export default function HomeScreen({ navigation }) {
           </View>
         ))}
       </ScrollView>
-      {/* <Button
-        className="bg-white text-xl"
-        title="Go to Profile"
-        onPress={() => navigation.navigate('Profile')}
-        /> */}
+      <View>
+        <NavigationBar navigation={navigation} />
+      </View>
     </View>
   );
 }

@@ -18,13 +18,14 @@ export default function AppNavigator() {
     <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="SignUp" component={Signup} />
+
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="NewBill" component={NewBill} />
       <Stack.Screen name="AddProduct" component={AddProduct} />
       <Stack.Screen name="AllBills" component={AllBills} />
       <Stack.Screen name="Products" component={Products} />
-      <Stack.Screen name="Report" component={Report} />
+      <Stack.Screen name="Reports" component={Report} />
     </Stack.Navigator>
   );
 }
