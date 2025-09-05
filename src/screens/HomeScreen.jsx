@@ -172,7 +172,7 @@ export default function HomeScreen({ navigation }) {
         contentContainerStyle={{ paddingBottom: wp('50%') }}
         showsVerticalScrollIndicator={false}
         scrollEnabled={true}
-        declerationRate="normal"
+        // declerationRate="normal"
         overScrollMode="always"
       >
         {bills.map((b, index) => (
