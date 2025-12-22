@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -21,6 +21,8 @@ import logo from '../assets/images/logo.png';
 import NavigationBar from '../components/NavigationBar.jsx';
 import { TextInput } from 'react-native';
 export default function HomeScreen({ navigation }) {
+  const [query, setQuery] = useState('');
+  const [filteredBills, setFilteredBills] = useState(bills);
   const size = wp('30%');
   const bills = [
     { name: 'Apple', price: 50 },
@@ -33,6 +35,16 @@ export default function HomeScreen({ navigation }) {
     { name: 'Watermelon', price: 20 },
     { name: 'Watermelon', price: 20 },
   ];
+
+  const searchItem = text => {
+    setQuery(text);
+    // Implement search functionality here
+    const result = bills.filter(bill =>
+      bill.name.toLowerCase().includes(text.toLowerCase()),
+    );
+    setFilteredBills(result);
+    console.log('Searching for:', result);
+  };
   return (
     <View
       style={{ padding: wp('4%') }}
@@ -156,6 +168,7 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View className="w-[90%] border-b border-white my-4" />
+      {/* ///////SEARCHBAR////// */}
       <View className="bg-Clightgray w-full h-[4rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
         <Image
           resizeMode="contain"
@@ -164,8 +177,10 @@ export default function HomeScreen({ navigation }) {
         />
         <TextInput
           placeholder="Search"
+          value={query}
           placeholderTextColor="gray"
-          className="text-white text-xl font-semibold  "
+          onChangeText={searchItem}
+          className="text-white text-xl Appfont-semibold  "
         />
       </View>
       <ScrollView
@@ -175,40 +190,41 @@ export default function HomeScreen({ navigation }) {
         // declerationRate="normal"
         overScrollMode="always"
       >
-        {bills.map((b, index) => (
-          <View
-            key={index}
-            style={{ padding: wp('4%'), gap: '5%', height: hp('10%') }}
-            className="bg-Clightgray w-full my-2  rounded-xl flex flex-row justify-between align-middle items-center "
-          >
-            <View className="flex flex-col gap-2">
-              <Text
-                style={{ fontSize: wp('6%') }}
-                className="text-white font-semibold "
-              >
-                {b.name}
-              </Text>
-              {/* Dashed line */}
-              {[30, 15, 20, 6].map((w, index) => (
-                <View
-                  key={index}
-                  style={{
-                    borderBottomWidth: 1,
-                    borderStyle: 'dashed',
-                    borderColor: 'white',
-                    width: wp(`${w}`),
-                  }}
-                />
-              ))}
-            </View>
-            <Text
-              style={{ fontSize: wp('5%') }}
-              className="text-white font-semibold"
+        {Array.isArray(filteredBills) &&
+          filteredBills.map((b, index) => (
+            <View
+              key={index}
+              style={{ padding: wp('4%'), gap: '5%', height: hp('10%') }}
+              className="bg-Clightgray w-full my-2  rounded-xl flex flex-row justify-between align-middle items-center "
             >
-              ₹ {b.price}.00
-            </Text>
-          </View>
-        ))}
+              <View className="flex flex-col gap-2">
+                <Text
+                  style={{ fontSize: wp('6%') }}
+                  className="text-white font-semibold "
+                >
+                  {b.name}
+                </Text>
+                {/* Dashed line */}
+                {[30, 15, 20, 6].map((w, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderStyle: 'dashed',
+                      borderColor: 'white',
+                      width: wp(`${w}`),
+                    }}
+                  />
+                ))}
+              </View>
+              <Text
+                style={{ fontSize: wp('5%') }}
+                className="text-white font-semibold"
+              >
+                ₹ {b.price}.00
+              </Text>
+            </View>
+          ))}
       </ScrollView>
       <View>
         <NavigationBar navigation={navigation} />
