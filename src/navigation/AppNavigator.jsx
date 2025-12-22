@@ -19,7 +19,6 @@ export default function AppNavigator() {
     <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="SignUp" component={Signup} />
-
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="NewBill" component={NewBill} />

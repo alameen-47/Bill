@@ -50,6 +50,18 @@ export default function HomeScreen({ navigation }) {
       style={{ padding: wp('4%') }}
       className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-center align-middle items-center"
     >
+      <TouchableOpacity>
+        <Image
+          source={settings}
+          resizeMode="contain"
+          style={{
+            width: wp('8%'),
+            height: hp('5%'),
+            alignSelf: '!flex-end',
+            left: wp('40%'),
+          }}
+        />
+      </TouchableOpacity>
       <View
         style={{ gap: wp('5%') }}
         className=" flex flex-row justify-center align-middle items-center"
@@ -66,7 +78,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <Text
           style={{ fontSize: wp('6%') }}
-          className="text-white overflow-hidden"
+          className="text-white overflow-hidden break-words  font-semibold"
         >
           The Fresh Paradise
         </Text>
