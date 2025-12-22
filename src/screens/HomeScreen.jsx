@@ -50,6 +50,7 @@ export default function HomeScreen({ navigation }) {
       style={{ padding: wp('4%') }}
       className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-center align-middle items-center"
     >
+      {/* //SETTINGS//// */}
       <TouchableOpacity>
         <Image
           source={settings}
@@ -62,6 +63,7 @@ export default function HomeScreen({ navigation }) {
           }}
         />
       </TouchableOpacity>
+      {/* //////// */}
       <View
         style={{ gap: wp('5%') }}
         className=" flex flex-row justify-center align-middle items-center"
@@ -238,6 +240,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           ))}
       </ScrollView>
+    {/* ///////////NAVIGATION BAR //////////// */}
       <View>
         <NavigationBar navigation={navigation} />
       </View>

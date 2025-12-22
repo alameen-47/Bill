@@ -3,10 +3,14 @@ import React from 'react';
 import '.././global.css';
 import AppNavigator from './navigation/AppNavigator';
 import { NavigationContainer } from '@react-navigation/native';
-export default function App() {
+import NavigationBar from './components/NavigationBar';
+export default function App({navigation}) {
   return (
+    <>
     <NavigationContainer>
-      <AppNavigator />
+        <AppNavigator />
     </NavigationContainer>
+  
+    </>
   );
 }
