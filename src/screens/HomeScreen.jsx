@@ -240,7 +240,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           ))}
       </ScrollView>
-    {/* ///////////NAVIGATION BAR //////////// */}
+      {/* ///////////NAVIGATION BAR //////////// */}
       <View>
         <NavigationBar navigation={navigation} />
       </View>
