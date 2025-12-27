@@ -113,7 +113,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('NewBill')}
+          onPress={() => navigation.navigate('AllBills')}
           style={{
             padding: wp('4%'),
             height: hp('auto'),
