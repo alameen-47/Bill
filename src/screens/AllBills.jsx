@@ -16,131 +16,30 @@ import {
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import NavigationBar from '../components/NavigationBar';
 
-export default function NewBill() {
+export default function NewBill({ navigation }) {
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [filterdItems, setFilteredItems] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const categories = [
-    {
-      name: 'Fruits',
-      id: 1,
-      items: [
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Mango', emoji: '🥭' },
-      ],
-    },
-    {
-      name: 'Vegetables',
-      id: 2,
-      items: [
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-      ],
-    },
-    {
-      name: 'Dairy',
-      id: 3,
-      items: [
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-      ],
-    },
-    {
-      name: 'Bakery',
-      id: 4,
-      items: [
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-      ],
-    },
+  const bills = [
+    { name: 'Apple', price: 50 },
+    { name: 'Banana', price: 20 },
+    { name: 'Orange', price: 30 },
+    { name: 'Grapes', price: 40 },
+    { name: 'Pineapple', price: 70 },
+    { name: 'Watermelon', price: 20 },
+    { name: 'Watermelon', price: 20 },
+    { name: 'Watermelon', price: 20 },
+    { name: 'Watermelon', price: 20 },
   ];
+  const [filteredBills, setFilteredBills] = useState(bills);
   const searchData = search => {
     setSearch(search);
-    const result = categories.filter(cat =>
-      cat.items.some(item =>
-        item.name.toLowerCase().includes(search.toLowerCase()),
-      ),
+    const result = bills.filter(item =>
+      item.name.toLowerCase().includes(search.toLowerCase()),
     );
-    setFilteredItems(result);
+    setFilteredBills(result);
   };
-  const selectedCategoryItems =
-    categories.find(cat => cat.name === selectedCategory)?.items || [];
+
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -153,25 +52,65 @@ export default function NewBill() {
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             All Bills
           </Text>
-          <View style={styles.buttonContainer}>
-            <View
-              style={{
-                height: hp(0.1),
-                backgroundColor: 'white',
-                width: wp(90),
-              }}
-            />
-            <View
-              style={{
-                gap: hp('2%'),
-                marginTop: hp('2%'),
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
-            ></View>
-          </View>
+          <View className="w-[100%] border-b border-white " />
         </View>
+        {/* ///////SEARCHBAR////// */}
+        <View className="bg-Clightgray w-full h-[rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
+          <Image
+            resizeMode="contain"
+            style={{ width: wp('8%'), height: hp('4%') }}
+            source={search}
+          />
+          <TextInput
+            placeholder="Search"
+            value={search}
+            placeholderTextColor="gray"
+            onChangeText={searchData}
+            className="text-white text-xl Appfont-semibold  "
+          />
+        </View>
+        {/* ///////BILLS LIST////// */}
+        
+        <FlatList
+          data={filteredBills}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View
+              style={{ padding: wp('4%'), gap: '5%', height: hp('10%') }}
+              className="bg-Clightgray w-full my-2  rounded-xl flex flex-row justify-between align-middle items-center "
+            >
+              <View className="flex flex-col gap-2">
+                <Text
+                  style={{ fontSize: wp('6%') }}
+                  className="text-white font-semibold "
+                >
+                  {item.name}
+                </Text>
+                {/* Dashed line */}
+                {[30, 15, 20, 6].map((w, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderStyle: 'dashed',
+                      borderColor: 'white',
+                      width: wp(`${w}`),
+                    }}
+                  />
+                ))}
+              </View>
+              <Text
+                style={{ fontSize: wp('5%') }}
+                className="text-white font-semibold"
+              >
+                ₹ {item.price}.00
+              </Text>
+            </View>
+          )}
+          contentContainerStyle={{ paddingBottom: hp('2%') }}
+        />
       </SafeAreaView>
+      {/* ///////////NAVIGATION BAR //////////// */}
     </SafeAreaProvider>
   );
 }

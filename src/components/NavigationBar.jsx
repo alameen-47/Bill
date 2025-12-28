@@ -16,7 +16,7 @@ const NavigationBar = () => {
     <SafeAreaView edges={['bottom']}>
       <View
         style={{ height: hp('8%'), paddingHorizontal: wp('10%') }}
-        className="bg-Cnavyblue w-screen flex-row -bottom-5 flex  justify-between align-middle items-center"
+        className="bg-Cnavyblue w-screen flex-row  flex  justify-between align-middle items-center"
       >
         <TouchableOpacity
           onPress={() => navigation.navigate('HomeScreen')}
