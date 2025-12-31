@@ -129,7 +129,7 @@ export default function NewBill({ navigation }) {
                 style={{ fontSize: wp('5%') }}
                 className="text-white font-semibold"
               >
-                ₹ {item.price}.00 
+                ₹ {item.price}.00
               </Text>
             </View>
           )}

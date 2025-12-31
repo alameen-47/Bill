@@ -1,9 +1,17 @@
-import { View, Text, Image, TextInput, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 
@@ -20,7 +28,8 @@ export default function Products() {
     { id: 8, name: 'Strawberry', price: 90, emoji: '🍓' },
     { id: 9, name: 'Blueberry', price: 80, emoji: '🫐' },
   ];
-  // const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredProducts, setFilteredProducts] = useState(products);
+
   // -------------------------------------------
 
   const searchData = search => {
@@ -63,18 +72,22 @@ export default function Products() {
         </View>
         {/* PRODUCTS */}
         <FlatList
-          data={products}
+          data={filteredProducts}
           keyExtractor={item => item.id.toString()}
-          renderItem={item => (
-            <View key={index} style={styles.productCard}>
+          renderItem={({ item }) => (
+            <View style={styles.productCard}>
               <Text style={styles.productImage}>{item.emoji}</Text>
-              <Text style={{ fontSize: 30, color: 'white' }}>{item.name}</Text>
-              <Text style={{ fontSize: 30, color: 'white' }}>
-                {item.price}.00 ₹
+              <Text style={{ fontSize: 25, color: 'white' }}>{item.name}</Text>
+              <Text style={{ fontSize: 25, color: 'white' }}>
+                ₹ {item.price}.00
               </Text>
             </View>
           )}
         />
+        {/* ADD PRODUCT BUTTON */}
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>+ Add Product</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -96,5 +109,18 @@ const styles = {
     justifyContent: 'center',
 
     marginRight: 15,
+  },
+  button: {
+    backgroundColor: '#DA7320',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    width: '100%',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 28,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 };
