@@ -8,6 +8,7 @@ import {
   Modal,
   Alert,
   Pressable,
+  Button,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -16,8 +17,7 @@ import {
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import NavigationBar from '../components/NavigationBar';
-
+import ReceiptPreview from '../reciept/RecieptPreview';
 export default function NewBill({ navigation }) {
   const [search, setSearch] = useState('');
   const bills = [
@@ -32,6 +32,9 @@ export default function NewBill({ navigation }) {
     { name: 'Watermelon', price: 20 },
   ];
   const [filteredBills, setFilteredBills] = useState(bills);
+  const [previewText, setPreviewText] = useState('');
+  // -------------------------------------------
+
   const searchData = search => {
     setSearch(search);
     const result = bills.filter(item =>
@@ -40,6 +43,20 @@ export default function NewBill({ navigation }) {
     setFilteredBills(result);
   };
 
+  //  -------------------------------------------
+  const reciept = {
+    shopName: 'The Fresh Paradise',
+    currency: '₹',
+    // items: [
+    //   { name: 'Apple', qty: 2, price: 100 },
+    //   { name: 'Banana', qty: 5, price: 50 },
+    //   { name: 'Orange', qty: 3, price: 90 },
+    //   { name: 'Grapes', qty: 1, price: 120 },
+    //   { name: 'Pineapple', qty: 2, price: 140 },
+    // ],
+    footer: 'Thank you for shopping with us!',
+  };
+  // ---------------------------------
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -59,7 +76,7 @@ export default function NewBill({ navigation }) {
           <Image
             resizeMode="contain"
             style={{ width: wp('8%'), height: hp('4%') }}
-            source={search}
+            source={searchImg}
           />
           <TextInput
             placeholder="Search"
@@ -70,7 +87,16 @@ export default function NewBill({ navigation }) {
           />
         </View>
         {/* ///////BILLS LIST////// */}
+        {/* ----------------- Receipt Preview & Print ---------------- */}
+        {/* <Button
         
+          title="Preview Reciept"
+          onPress={<ReceiptPreview text={reciept} />}
+         ></Button>
+        <ReceiptPreview text={reciept} />
+        <Button title="Print Reciept" onPress={() => printReceipt(data)} /> */}
+
+        {/* ------------------------------------------- */}
         <FlatList
           data={filteredBills}
           keyExtractor={(item, index) => index.toString()}
@@ -103,7 +129,7 @@ export default function NewBill({ navigation }) {
                 style={{ fontSize: wp('5%') }}
                 className="text-white font-semibold"
               >
-                ₹ {item.price}.00
+                ₹ {item.price}.00 
               </Text>
             </View>
           )}
