@@ -14,9 +14,11 @@ import {
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Products() {
   const [search, setSearch] = useState('');
+  const navigation = useNavigation();
   const products = [
     { id: 1, name: 'Apple', price: 50, emoji: '🍎' },
     { id: 2, name: 'Banana', price: 20, emoji: '🍌' },
@@ -85,7 +87,10 @@ export default function Products() {
           )}
         />
         {/* ADD PRODUCT BUTTON */}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={()=>navigation.navigate('AddProduct')}
+        >
           <Text style={styles.buttonText}>+ Add Product</Text>
         </TouchableOpacity>
       </SafeAreaView>

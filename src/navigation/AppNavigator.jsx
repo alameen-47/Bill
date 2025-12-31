@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="HomeScreen"
+      initialRouteName="AddProduct"
       screenOptions={{
         headerTitle: '',
         headerTintColor: '#fff',

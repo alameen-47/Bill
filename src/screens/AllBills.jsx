@@ -18,7 +18,7 @@ import {
 import searchImg from '../assets/icons/search.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ReceiptPreview from '../reciept/RecieptPreview';
-export default function NewBill({ navigation }) {
+export default function AllBills({ navigation }) {
   const [search, setSearch] = useState('');
   const bills = [
     { name: 'Apple', price: 50 },

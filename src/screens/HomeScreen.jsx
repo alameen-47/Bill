@@ -18,7 +18,6 @@ import graph from '../assets/icons/graph.png';
 import settings from '../assets/icons/settings.png';
 import search from '../assets/icons/search.png';
 import logo from '../assets/images/logo.png';
-import NavigationBar from '../components/NavigationBar.jsx';
 import { TextInput } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 export default function HomeScreen({ navigation }) {
@@ -242,7 +241,6 @@ export default function HomeScreen({ navigation }) {
               </View>
             ))}
         </ScrollView>
-      
       </SafeAreaView>
     </SafeAreaProvider>
   );
