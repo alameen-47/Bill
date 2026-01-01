@@ -47,13 +47,7 @@ export default function AllBills({ navigation }) {
   const reciept = {
     shopName: 'The Fresh Paradise',
     currency: '₹',
-    // items: [
-    //   { name: 'Apple', qty: 2, price: 100 },
-    //   { name: 'Banana', qty: 5, price: 50 },
-    //   { name: 'Orange', qty: 3, price: 90 },
-    //   { name: 'Grapes', qty: 1, price: 120 },
-    //   { name: 'Pineapple', qty: 2, price: 140 },
-    // ],
+
     footer: 'Thank you for shopping with us!',
   };
   // ---------------------------------

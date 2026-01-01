@@ -51,19 +51,6 @@ export default function HomeScreen({ navigation }) {
         style={{ padding: wp('4%') }}
         className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-center align-middle items-center"
       >
-        {/* //SETTINGS//// */}
-        <TouchableOpacity>
-          <Image
-            source={settings}
-            resizeMode="contain"
-            style={{
-              width: wp('8%'),
-              height: hp('5%'),
-              alignSelf: '!flex-end',
-              left: wp('40%'),
-            }}
-          />
-        </TouchableOpacity>
         {/* //////// */}
         <View
           style={{ gap: wp('5%') }}

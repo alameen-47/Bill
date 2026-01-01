@@ -44,48 +44,21 @@ export default function Products() {
                   marginBottom: hp('2%'),
                 }}
               >
-                <Text
-                  style={{
-                    color: 'white',
-                    fontWeight: 500,
-                    fontSize: 18,
-                    margin: wp('1%'),
-                  }}
-                >
-                  Category
-                </Text>
+                <Text style={styles.text}>Category</Text>
                 <TextInput
                   style={styles.TextInput}
                   placeholder="Enter Category"
                   placeholderTextColor="gray"
                 />
-                <Text
-                  style={{
-                    color: 'white',
-                    fontWeight: 500,
-                    fontSize: 18,
-                    margin: wp('1%'),
-                  }}
-                >
-                  Name
-                </Text>
+                <Text style={styles.text}>Name</Text>
                 <TextInput
                   style={styles.TextInput}
                   placeholder="Enter Name"
                   placeholderTextColor="gray"
                 />
-                <Text
-                  style={{
-                    color: 'white',
-                    fontWeight: 500,
-                    fontSize: 18,
-                    margin: wp('1%'),
-                  }}
-                >
-                  Price
-                </Text>
+                <Text style={styles.text}>Price</Text>
                 <TextInput
-                keyboardType='numeric'
+                  keyboardType="numeric"
                   style={styles.TextInput}
                   placeholder="Enter Price"
                   placeholderTextColor="gray"
@@ -153,5 +126,11 @@ const styles = {
     color: 'white',
     fontSize: 28,
     fontWeight: 'bold',
+  },
+  text: {
+    color: 'white',
+    fontWeight: 500,
+    fontSize: 18,
+    margin: wp('1%'),
   },
 };
