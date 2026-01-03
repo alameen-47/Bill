@@ -147,7 +147,7 @@ const styles = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: wp('4%'),
-    marginTop: hp('2%'),
+       
   },
   button: {
     marginHorizontal: wp('2%'),
@@ -168,7 +168,7 @@ const styles = {
     width: wp(40),
     height: hp(15),
     borderRadius: 20,
-    marginTop: hp('2%'),
+       
     display: 'flex',
     itemsAlign: 'center',
     justifyContent: 'center',

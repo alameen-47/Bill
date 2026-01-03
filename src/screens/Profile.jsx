@@ -1,4 +1,12 @@
-import { View, Text, TextInput, Image, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import React from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -6,10 +14,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import pencil from '../assets/icons/pencil.png';
+import logo from '../assets/images/logo.png';
 export default function Profile() {
   const profile = [
-    { id: 1, label: 'Company Name', value: 'The Fresh Paradise' },
-    // { id:1, label: 'Name', value: 'John Doe' },
+    { id: 1, label: 'Shop Name', value: 'The Fresh Paradise' },
     { id: 2, label: 'Email', value: 'alameenkhan1431@gmail.com' },
     { id: 3, label: 'Phone', value: '+1 234 567 890' },
     { id: 4, label: 'Address', value: '123 Main St, Balele,Karnataka, India' },
@@ -30,17 +38,26 @@ export default function Profile() {
           </Text>
           <View className="w-[100%] border-b border-white " />
         </View>
-        //////// Profile Details/////////
+        {/* //////// Profile Details///////// */}
         {/* /////PROFILE IMAGE/////// */}
-        <View>
-          <View style={styles.ImageContainer}>
-            <Image style={styles.ImageStyle} source={''} />
-          </View>
+        <View style={{ alignItems: 'center', width: '100%' }}>
+          <TouchableOpacity style={styles.ImageContainer}>
+            <Image style={styles.ImageStyle} source={logo} />
+            <Image
+              style={{ position: 'absolute', right: 20, bottom: 0 }}
+              source={pencil}
+            />
+          </TouchableOpacity>
+          <Text style={{ color: 'white', fontSize: wp(8), fontWeight: 'bold' }}>
+            The Fresh Paradise
+          </Text>
         </View>
-        ///////////////////////
+        <View className="w-[100%] border-b border-white " />
+
+        {/* /////////////////////// */}
         <View
-          className="w-[100%] mt-10 p-5 rounded-lg"
-          style={{ backgroundColor: '#2C2C2C' }}
+          className="w-[100%]  p-5 rounded-lg"
+          style={{ backgroundColor: '#1c1c1cff', flex: 1 }}
         >
           <FlatList
             data={profile}
@@ -57,6 +74,13 @@ export default function Profile() {
               </>
             )}
           />
+          {/* ADD PRODUCT BUTTON */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => Alert.alert('Profile Updated')}
+          >
+            <Text style={styles.buttonText}>UPDATE</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -64,14 +88,15 @@ export default function Profile() {
 }
 const styles = {
   ImageContainer: {
-    width: wp('30%'),
-    height: hp('15%'),
+    width: wp('28%'),
+    height: hp('12.5%'),
     borderRadius: 100,
     backgroundColor: 'gray',
     justifyContent: 'center',
     alignItems: 'center',
   },
   ImageStyle: {
+    backgroundColor: '#DA7320',
     width: '90%',
     height: '90%',
     borderRadius: 100,
