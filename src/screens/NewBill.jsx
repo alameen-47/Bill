@@ -38,7 +38,7 @@ export default function NewBill() {
       id: 2,
       items: [
         { id: 6, name: 'Carrot', emoji: '🥕' },
-        { id: 7, name: 'Broccoli', emoji: '  🥦' },
+        { id: 7, name: 'Broccoli', emoji: ' 🥦' },
         { id: 8, name: 'Potato', emoji: '🥔' },
         { id: 9, name: 'Tomato', emoji: '🍅' },
         { id: 10, name: 'Cucumber', emoji: '🥒' },
@@ -106,7 +106,6 @@ export default function NewBill() {
             <View
               style={{
                 gap: hp('2%'),
-
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}
@@ -188,29 +187,53 @@ export default function NewBill() {
               </TouchableOpacity>
             )}
           />
-
-          {/* ----------------------------------------- */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed');
-              setModalVisible(!modalVisible);
-            }}
-          >
-            {selectedItem && (
-              <View style={styles.modalContainer}>
-                <Pressable onPress={() => setModalVisible(!modalVisible)}>
-                  <Text>{selectedItem.name}</Text>
-                  <Text>{selectedItem.price}</Text>
-                  <Text>{selectedItem.emoji}</Text>
-                </Pressable>
-              </View>
-            )}
-          </Modal>
-          {/* ----------------------------------------- */}
         </View>
+        {/* ----------------------------------------- */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed');
+            setModalVisible(!modalVisible);
+          }}
+        >
+          {selectedItem && (
+            <View style={styles.modalContainer}>
+              <Pressable
+                style={styles.closeButton}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.closeText}>🆇 </Text>
+              </Pressable>
+              <View style={styles.imageContainer}>
+                <Text style={styles.image}>{selectedItem.emoji}</Text>
+              </View>
+              <Text style={styles.text}>{selectedItem.name}</Text>
+              <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="AMOUNT /-"
+                  backgroundColor="white"
+                />
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="QUANTITY "
+                  backgroundColor="white"
+                />
+              </View>
+              <TextInput
+                style={[styles.textInput, { height: hp(8), margin: 5 }]}
+                placeholder="TOTAL"
+                backgroundColor="white"
+              />
+              <TouchableOpacity style={styles.addButton}>
+                <Text style={styles.buttonText}>ADD</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Modal>
+        {/* ----------------------------------------- */}
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -260,12 +283,43 @@ const styles = {
     borderRadius: 20,
   },
   modalContainer: {
-    flex: 1,
+    height: hp(40),
+    display: 'absolute',
+    top: hp(25),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(138, 97, 97, 0.5)',
+    backgroundColor: 'rgba(153, 147, 147, 1)',
+    borderRadius:20
   },
-  modalImage:{
-    
-  }
+  modalImage: {
+    fontSize: wp(25),
+    padding: 25,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 8,
+  },
+  closeText: {
+    fontSize: wp(10),
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  textInput: {
+    width: wp(30),
+    borderRadius: 10,
+  },
+  addButton: {
+    backgroundColor: '#DA7320',
+    padding: 10,
+    borderRadius: 15,
+    width: wp(50),
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
 };
