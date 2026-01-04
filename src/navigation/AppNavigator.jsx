@@ -22,7 +22,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="Profile"
+      initialRouteName="NewBill"
       screenOptions={({ navigation }) => ({
         headerTitle: '',
         headerTintColor: '#fff',

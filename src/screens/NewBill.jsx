@@ -19,117 +19,58 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NewBill() {
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [filterdItems, setFilteredItems] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState('');
   const categories = [
     {
       name: 'Fruits',
       id: 1,
       items: [
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Apple', emoji: '🍎' },
-        { name: 'Banana', emoji: '🍌' },
-        { name: 'Orange', emoji: '🍊' },
-        { name: 'Grapes', emoji: '🍇' },
-        { name: 'Mango', emoji: '🥭' },
-        { name: 'Mango', emoji: '🥭' },
+        { id: 1, name: 'Apple', emoji: '🍎' },
+        { id: 2, name: 'Banana', emoji: '🍌' },
+        { id: 3, name: 'Orange', emoji: '🍊' },
+        { id: 4, name: 'Grapes', emoji: '🍇' },
+        { id: 5, name: 'Mango', emoji: '🥭' },
       ],
     },
     {
       name: 'Vegetables',
       id: 2,
       items: [
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
-        { name: 'Carrot', emoji: '🥕' },
-        { name: 'Broccoli', emoji: '  🥦' },
-        { name: 'Potato', emoji: '🥔' },
-        { name: 'Tomato', emoji: '🍅' },
-        { name: 'Cucumber', emoji: '🥒' },
+        { id: 6, name: 'Carrot', emoji: '🥕' },
+        { id: 7, name: 'Broccoli', emoji: '  🥦' },
+        { id: 8, name: 'Potato', emoji: '🥔' },
+        { id: 9, name: 'Tomato', emoji: '🍅' },
+        { id: 10, name: 'Cucumber', emoji: '🥒' },
       ],
     },
     {
       name: 'Dairy',
       id: 3,
       items: [
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
-        { name: 'Milk', emoji: '🥛' },
-        { name: 'Cheese', emoji: '🧀' },
-        { name: 'Yogurt', emoji: '🍦' },
-        { name: 'Butter', emoji: '🧈' },
-        { name: 'Ice Cream', emoji: '🍧' },
+        { id: 11, name: 'Milk', emoji: '🥛' },
+        { id: 12, name: 'Cheese', emoji: '🧀' },
+        { id: 13, name: 'Yogurt', emoji: '🍦' },
+        { id: 14, name: 'Butter', emoji: '🧈' },
+        { id: 15, name: 'Ice Cream', emoji: '🍧' },
       ],
     },
     {
       name: 'Bakery',
       id: 4,
       items: [
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
-        { name: 'Bread', emoji: '🍞' },
-        { name: 'Croissant', emoji: '🥐' },
-        { name: 'Bagel', emoji: '🥯' },
-        { name: 'Muffin', emoji: '🧁' },
-        { name: 'Cake', emoji: '🍰' },
+        { id: 16, name: 'Bread', emoji: '🍞' },
+        { id: 17, name: 'Croissant', emoji: '🥐' },
+        { id: 18, name: 'Bagel', emoji: '🥯' },
+        { id: 19, name: 'Muffin', emoji: '🧁' },
+        { id: 20, name: 'Cake', emoji: '🍰' },
       ],
     },
   ];
+  const [selectedCategoryId, setSelectedCategoryId] = useState(
+    categories[0].id,
+  );
+
   const searchData = search => {
     setSearch(search);
     const result = categories.filter(cat =>
@@ -140,7 +81,8 @@ export default function NewBill() {
     setFilteredItems(result);
   };
   const selectedCategoryItems =
-    categories.find(cat => cat.name === selectedCategory)?.items || [];
+    categories.find(cat => cat.id === selectedCategoryId)?.items || [];
+  console.log('+++++++++', selectedItem, '4444444444');
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -164,7 +106,7 @@ export default function NewBill() {
             <View
               style={{
                 gap: hp('2%'),
-                   
+
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}
@@ -178,11 +120,7 @@ export default function NewBill() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() =>
-                      setSelectedCategory(
-                        selectedCategory === item.name ? null : item.name,
-                      )
-                    }
+                    onPress={() => setSelectedCategoryId(item.id)}
                   >
                     <Text
                       style={{ fontSize: wp('5%') }}
@@ -223,6 +161,7 @@ export default function NewBill() {
               <Text style={styles.image}>{item.emoji}</Text>;
             });
           })}
+
           {/* ////PRODUCTS//// */}
           <FlatList
             data={selectedCategoryItems}
@@ -232,7 +171,10 @@ export default function NewBill() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.imageContainer}
-                onPress={setModalVisible(prev => !prev)}
+                onPress={() => {
+                  setSelectedItem(item);
+                  setModalVisible(!modalVisible);
+                }}
               >
                 <Text style={styles.image}>{item.emoji}</Text>
                 <Text
@@ -246,27 +188,28 @@ export default function NewBill() {
               </TouchableOpacity>
             )}
           />
+
+          {/* ----------------------------------------- */}
           <Modal
             animationType="slide"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
+              Alert.alert('Modal has been closed');
               setModalVisible(!modalVisible);
             }}
           >
-            <View style={styles.imageContainer}>
-              <View style={styles.image}>
-                <Text style={styles.modalText}>Hello World!</Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
+            {selectedItem && (
+              <View style={styles.modalContainer}>
+                <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                  <Text>{selectedItem.name}</Text>
+                  <Text>{selectedItem.price}</Text>
+                  <Text>{selectedItem.emoji}</Text>
                 </Pressable>
               </View>
-            </View>
+            )}
           </Modal>
+          {/* ----------------------------------------- */}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -285,7 +228,6 @@ const styles = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: wp('4%'),
-       
   },
   button: {
     marginHorizontal: wp('2%'),
@@ -306,7 +248,7 @@ const styles = {
     width: wp(40),
     height: hp(15),
     borderRadius: 20,
-       
+    margin: wp(2),
     display: 'flex',
     itemsAlign: 'center',
     justifyContent: 'center',
@@ -317,4 +259,13 @@ const styles = {
     fontSize: wp(20),
     borderRadius: 20,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(138, 97, 97, 0.5)',
+  },
+  modalImage:{
+    
+  }
 };

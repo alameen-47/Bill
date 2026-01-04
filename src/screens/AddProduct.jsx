@@ -57,6 +57,9 @@ export default function Products() {
                   placeholderTextColor="gray"
                 />
                 <Text style={styles.text}>Price</Text>
+                <FlatList>
+                  
+                </FlatList>
                 <TextInput
                   keyboardType="numeric"
                   style={styles.TextInput}

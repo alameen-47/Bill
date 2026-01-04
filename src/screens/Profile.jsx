@@ -23,6 +23,7 @@ export default function Profile() {
     { id: 4, label: 'Address', value: '123 Main St, Balele,Karnataka, India' },
     { id: 5, label: 'GST Number {optional}', value: '29ABCDE1234F2Z5' },
   ];
+  
 
   return (
     <SafeAreaProvider>
