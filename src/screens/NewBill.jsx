@@ -188,7 +188,7 @@ export default function NewBill() {
             )}
           />
         </View>
-        {/* ----------------------------------------- */}
+        {/* ----------------MODAL------------------------- */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -289,7 +289,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(153, 147, 147, 1)',
-    borderRadius:20
+    borderRadius: 20,
   },
   modalImage: {
     fontSize: wp(25),
@@ -309,6 +309,8 @@ const styles = {
   textInput: {
     width: wp(30),
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'black',
   },
   addButton: {
     backgroundColor: '#DA7320',

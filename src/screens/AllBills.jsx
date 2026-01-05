@@ -32,7 +32,6 @@ export default function AllBills({ navigation }) {
     { name: 'Watermelon', price: 20 },
   ];
   const [filteredBills, setFilteredBills] = useState(bills);
-  const [previewText, setPreviewText] = useState('');
   // -------------------------------------------
 
   const searchData = search => {
@@ -80,15 +79,6 @@ export default function AllBills({ navigation }) {
             className="text-white text-xl Appfont-semibold  "
           />
         </View>
-        {/* ///////BILLS LIST////// */}
-        {/* ----------------- Receipt Preview & Print ---------------- */}
-        {/* <Button
-        
-          title="Preview Reciept"
-          onPress={<ReceiptPreview text={reciept} />}
-         ></Button>
-        <ReceiptPreview text={reciept} />
-        <Button title="Print Reciept" onPress={() => printReceipt(data)} /> */}
 
         {/* ------------------------------------------- */}
         <FlatList
@@ -130,7 +120,6 @@ export default function AllBills({ navigation }) {
           contentContainerStyle={{ paddingBottom: hp('2%') }}
         />
       </SafeAreaView>
-      {/* ///////////NAVIGATION BAR //////////// */}
     </SafeAreaProvider>
   );
 }
@@ -147,7 +136,6 @@ const styles = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: wp('4%'),
-       
   },
   button: {
     marginHorizontal: wp('2%'),
@@ -168,7 +156,7 @@ const styles = {
     width: wp(40),
     height: hp(15),
     borderRadius: 20,
-       
+
     display: 'flex',
     itemsAlign: 'center',
     justifyContent: 'center',
