@@ -3,7 +3,7 @@ import Product from '../models/productModel.js';
 export const createProductController = async (req, res) => {
   try {
     const { name, quantity, price } = req.body;
-    const existingProduct = await Product.findOne(name);
+    const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
       res
         .status(400)
@@ -33,15 +33,19 @@ export const getAllProductController = async (req, res) => {
 
 export const getSingleProductController = async (req, res) => {
   try {
-    const { name } = req.body;
-    const singleProduct = Product.findOne(name);
-    if (singleProduct) {
-      res.status(200).json({
-        succes: true,
-        message: 'Single Product Fetched Succesfully',
-        data: singleProduct,
+    const { name } = req.params;
+    const singleProduct = await Product.findOne({ name });
+    if (!singleProduct) {
+      res.status(400).json({
+        succes: false,
+        message: 'Product not Found',
       });
     }
+    return res.status(200).json({
+      succes: false,
+      message: 'Product fetched succesfully',
+      data: singleProduct,
+    });
   } catch (error) {
     console.log(error);
     res
