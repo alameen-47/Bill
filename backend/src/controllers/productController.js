@@ -53,3 +53,46 @@ export const getSingleProductController = async (req, res) => {
       .json({ succes: false, message: 'Error in GetSingleProductController' });
   }
 };
+
+export const singleProductUpdateController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, quantity } = req.body;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { name, price, quantity },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({
+        succes: false,
+        message: 'Product not found',
+      });
+    }
+    res.status(200).json({
+      succes: true,
+      message: 'Product updated successfully',
+      product: updatedProduct,
+    });
+  } catch (error) {
+    console.error('Error in SingleProductUpdateController: ', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+export const productDeleteController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).send({ message: 'Id is not mentioned' });
+    }
+    await Product.findByIdAndDelete(id);
+    res
+      .status(200)
+      .json({ succes: true, message: 'Product Deleted Succesfully' });
+  } catch (error) {
+    console.error('Error in Delete Controller: ', error);
+  }
+};
