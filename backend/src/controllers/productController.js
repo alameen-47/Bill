@@ -2,14 +2,14 @@ import Product from '../models/productModel.js';
 
 export const createProductController = async (req, res) => {
   try {
-    const { name, quantity, price } = req.body;
+    const { category, name, quantity, price } = req.body;
     const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
       res
         .status(400)
         .json({ message: 'Product with same name is Already Present' });
     }
-    const product = await Product.create({ name, quantity, price });
+    const product = await Product.create({ category, name, quantity, price });
     res.json(product);
   } catch (error) {
     console.log(error);
