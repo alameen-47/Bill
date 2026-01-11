@@ -8,20 +8,25 @@ export const registerController = async (req, res) => {
   const user = await User.create({ email, password: hashed });
   res.json(user);
 };
+
 export const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
+    // validate
     if (!email || !password) {
       res.status(400).json({ message: 'Missing Credentials' });
     }
+    // search
     const user = User.findOne(email);
     if (!user) {
       res.status(401).json({ message: 'Email Not Registered' });
     }
+    // password check
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid Credentials' });
     }
+    // jwt token generation
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
