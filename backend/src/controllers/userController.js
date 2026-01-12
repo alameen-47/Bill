@@ -17,7 +17,7 @@ export const loginController = async (req, res) => {
       res.status(400).json({ message: 'Missing Credentials' });
     }
     // search
-    const user =await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       res.status(401).json({ message: 'Email Not Registered' });
     }
@@ -35,7 +35,7 @@ export const loginController = async (req, res) => {
       token,
       user: {
         id: user._id,
-        email: user._email,
+        email: user.email,
       },
     });
   } catch (error) {
