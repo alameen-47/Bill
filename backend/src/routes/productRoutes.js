@@ -6,10 +6,11 @@ import {
   productDeleteController,
   singleProductUpdateController,
 } from '../controllers/productController.js';
+import { requireSignIn } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/createProduct', createProductController);
+router.post('/createProduct', requireSignIn, createProductController);
 router.get('/getAllProducts', getAllProductController);
 router.get('/getSingleProduct/:name', getSingleProductController);
 router.put('/getSingleProduct/:id', singleProductUpdateController);

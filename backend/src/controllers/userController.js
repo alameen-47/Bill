@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
 export const registerController = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ email, password: hashed });
+  const user = await User.create({ name, email, password: hashed });
   res.json(user);
 };
 
@@ -17,7 +17,7 @@ export const loginController = async (req, res) => {
       res.status(400).json({ message: 'Missing Credentials' });
     }
     // search
-    const user = User.findOne(email);
+    const user =await User.findOne({ email }).select('+password');
     if (!user) {
       res.status(401).json({ message: 'Email Not Registered' });
     }
@@ -30,7 +30,7 @@ export const loginController = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
-
+    // data along with token
     res.json({
       token,
       user: {
