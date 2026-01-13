@@ -6,7 +6,9 @@ export const registerController = async (req, res) => {
   const { name, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hashed });
-  res.json(user);
+  res
+    .status(200)
+    .json({ success: true, message: 'User Registered Succesfully', user });
 };
 
 export const loginController = async (req, res) => {
