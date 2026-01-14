@@ -1,4 +1,11 @@
 import express from 'express';
+import {
+  createBillController,
+  deleteSingleBillController,
+  getAllBillController,
+  getSingleBillController,
+  updateSingleBillController,
+} from '../controllers/billController.js';
 
 const router = express.Router;
 
