@@ -15,6 +15,7 @@
   "**/node_modules": true,
   "**/dist": true,
   "**/build": true
-}
+},
+"postman.settings.dotenv-detection-notification-visibility": false
 
 }
