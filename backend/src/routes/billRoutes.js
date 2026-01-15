@@ -7,7 +7,7 @@ import {
   updateSingleBillController,
 } from '../controllers/billController.js';
 
-const router = express.Router;
+const router = express.Router();
 
 router.post('/createBill', createBillController);
 router.get('/getAllBill', getAllBillController);

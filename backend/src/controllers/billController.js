@@ -1,4 +1,4 @@
-import billModel from '../models/billModel';
+import billModel from '../models/billModel.js';
 export const createBillController = async (req, res) => {
   try {
     const { items, subTotal, discount, tax, grandTotal, paymentMethod } =
