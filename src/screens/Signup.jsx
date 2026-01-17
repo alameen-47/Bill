@@ -6,13 +6,13 @@ import {
 } from 'react-native-responsive-screen';
 import api from '../api/api.js';
 export default function Signup({ navigation }) {
-  const [name, setName] = useState('');
+  const [shopName, setShopName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const registerUser = async () => {
     try {
       const response = await api.post('/api/v1/auth/register', {
-        name,
+        shopName,
         email,
         password,
       });
@@ -30,14 +30,14 @@ export default function Signup({ navigation }) {
       className="bg-[#171717] flex-1 flex justify-center px-6    "
     >
       <Text
-        style={{ fontSize: wp('13%') }}
+        style={{ fontSize: wp('13%'), marginBottom: 10 }}
         className="text-white  font-semibold"
       >
         Sign Up
       </Text>
 
       <View
-        style={{ gap: wp('8%') }}
+        style={{ gap: wp('4%') }}
         className="w-full items-center justify-center "
       >
         <View className=" w-full ">
@@ -45,13 +45,13 @@ export default function Signup({ navigation }) {
             style={{ fontSize: wp('5%') }}
             className="text-[#9C9E9C]  font-semibold"
           >
-            Name
+            Shop Name
           </Text>
           <TextInput
             style={{ fontSize: wp('5%') }}
             className="bg-[#1C1C1D] px-[1.5rem] text-white  rounded-xl  h-[5rem]"
-            value={name}
-            onChangeText={setName}
+            value={shopName}
+            onChangeText={setShopName}
           />
         </View>
         <View className=" w-full ">
