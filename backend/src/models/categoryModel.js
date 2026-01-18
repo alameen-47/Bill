@@ -5,6 +5,7 @@ export default function categoryModel() {
   return (
     <View>
       <Text>categoryModel</Text>
+      <Text>categoryModel</Text>
     </View>
   );
 }
