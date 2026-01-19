@@ -6,6 +6,7 @@ export default function categoryModel() {
     <View>
       <Text>categoryModel</Text>
       <Text>categoryModel</Text>
+      <Text>categoryModel</Text>
     </View>
   );
 }
