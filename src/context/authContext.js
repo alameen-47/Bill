@@ -9,6 +9,7 @@ const AuthProvider = ({ children }) => {
 
   //default axios
   axios.defaults.headers.common['Authorization'] = `Bearer ${auth?.token}`;
+
   useEffect(() => {
     const loadAuth = async () => {
       const data = await AsyncStorage.getItem('auth');

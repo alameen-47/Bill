@@ -17,7 +17,7 @@ export default function Login({ navigation }) {
       const res = await api.post('/api/v1/auth/login', { email, password });
       console.log('LOGIN RESPONSE. -- > ', res.data);
       if (res.data?.success) {
-        setAuth({ user: res.data.user, token: res.data.token });
+        setAuth({ user: res.data?.user, token: res.data?.token });
         await AsyncStorage.setItem('auth', JSON.stringify(res.data));
         console.log('User Logged In Succesfully');
       }
