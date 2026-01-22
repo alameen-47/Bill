@@ -1,59 +1,12 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from '../screens/Login.jsx';
-import Signup from '../screens/Signup.jsx';
-import HomeScreen from '../screens/HomeScreen.jsx';
-import Profile from '../screens/Profile.jsx';
-import NewBill from '../screens/NewBill.jsx';
-import AddProduct from '../screens/AddProduct.jsx';
-import AllBills from '../screens/AllBills.jsx';
-import Products from '../screens/Products.jsx';
-import Report from '../screens/Report.jsx';
-import Bill from '../screens/Bill.jsx';
-
-import settings from '../assets/icons/settings.png';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-const Stack = createNativeStackNavigator();
-
-export default function AppNavigator() {
-  return (
-    <Stack.Navigator
-      initialRouteName="SignUp"
-      screenOptions={({ navigation }) => ({
-        headerTitle: '',
-        headerTintColor: '#fff',
-        headerStyle: { backgroundColor: '#171717' },
-        headerRight: () => (
-          <TouchableOpacity>
-            <Image
-              style={styles.settings}
-              source={settings}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        ),
-      })}
-    >
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="SignUp" component={Signup} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="NewBill" component={NewBill} />
-      <Stack.Screen name="Bill" component={Bill} />
-      <Stack.Screen name="AddProduct" component={AddProduct} />
-      <Stack.Screen name="AllBills" component={AllBills} />
-      <Stack.Screen name="Products" component={Products} />
-      <Stack.Screen name="Reports" component={Report} />
-    </Stack.Navigator>
-  );
-}
-const styles = {
-  settings: {
-    width: wp('8%'),
-    height: hp('5%'),
-  },
+import { useAuth } from '../context/authContext.js';
+import AuthStack from './AuthStack.jsx';
+import AppStack from './AppStack.jsx';
+const AppNavigator = () => {
+  const [auth] = useAuth();
+  console.log('AUTH STATE ->', auth);
+  return auth?.token ? <AppStack /> : <AuthStack />;
 };
+
+export default AppNavigator;

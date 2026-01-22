@@ -5,16 +5,21 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import api from '../api/api.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../context/authContext.js';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [auth, setAuth] = useAuth();
   const login = async () => {
     try {
       const res = await api.post('/api/v1/auth/login', { email, password });
+      console.log('LOGIN RESPONSE. -- > ', res.data);
       if (res.data?.success) {
-        await navigation.navigate('HomeScreen');
-        console.log('User Registered Succesfully');
+        setAuth({ user: res.data.user, token: res.data.token });
+        await AsyncStorage.setItem('auth', JSON.stringify(res.data));
+        console.log('User Logged In Succesfully');
       }
     } catch (error) {
       console.error('Error in Login', error);
