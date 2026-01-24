@@ -7,11 +7,13 @@ import {
 import api from '../api/api.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../context/authContext.js';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Login({ navigation }) {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [auth, setAuth] = useAuth();
+  const { navigation } = useNavigation();
   const login = async () => {
     try {
       const res = await api.post('/api/v1/auth/login', { email, password });
@@ -75,6 +77,13 @@ export default function Login({ navigation }) {
           className="text-[#9C9E9C]  font-semibold underline text-center "
         >
           Forgot Password?
+        </Text>
+        <Text
+          onPress={() => navigation.navigate('SignUp')}
+          style={{ fontSize: wp('5%') }}
+          className="text-[#9C9E9C]  font-semibold underline text-center "
+        >
+          Sign Up
         </Text>
         <TouchableOpacity
           onPress={() => login()}

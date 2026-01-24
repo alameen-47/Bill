@@ -5,7 +5,7 @@ export const requireSignIn = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).json({
-        succes: false,
+        success: false,
         message: 'Authorization header missing',
       });
     }
@@ -13,7 +13,7 @@ export const requireSignIn = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     if (!token) {
       return res.status(401).json({
-        succes: false,
+        success: false,
         messge: 'Token Missing',
       });
     }

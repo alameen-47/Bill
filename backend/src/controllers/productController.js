@@ -2,14 +2,15 @@ import Product from '../models/productModel.js';
 
 export const createProductController = async (req, res) => {
   try {
-    const { category, name, quantity, price } = req.body;
+    const { category, name, price } = req.body;
     const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
-      res
-        .status(400)
-        .json({ message: 'Product with same name is Already Present' });
+      res.status(400).json({
+        success: true,
+        message: 'Product with same name is Already Present',
+      });
     }
-    const product = await Product.create({ category, name, quantity, price });
+    const product = await Product.create({ category, name, price });
     res.json(product);
   } catch (error) {
     console.log(error);
@@ -37,7 +38,7 @@ export const getSingleProductController = async (req, res) => {
     const singleProduct = await Product.findOne({ name });
     if (!singleProduct) {
       res.status(400).json({
-        succes: false,
+        success: false,
         message: 'Product not Found',
       });
     }
@@ -57,10 +58,10 @@ export const getSingleProductController = async (req, res) => {
 export const singleProductUpdateController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, quantity } = req.body;
+    const { name, price } = req.body;
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, price, quantity },
+      { name, price },
       {
         new: true,
         runValidators: true,

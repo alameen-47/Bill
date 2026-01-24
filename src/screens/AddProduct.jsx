@@ -11,13 +11,75 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
-  widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import image from '../assets/icons/image.png';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import api from '../api/api.js';
+import Toast from 'react-native-toast-message';
+import { useAuth } from '../context/authContext.js';
 export default function Products() {
+  const [category, setCategory] = useState('');
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState(0);
   const navigation = useNavigation();
-
+  const [auth] = useAuth();
+  const token = auth.token;
+  const handleSubmit = async () => {
+    try {
+      const res = await api.post(
+        '/api/v1/products/createProduct',
+        {
+          category,
+          name,
+          price,
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (res.data.success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Product Created Succesfully ✅',
+        });
+        console.log('Product Created Succesfully');
+        navigation.navigate('AllProducts');
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error ❌',
+      });
+      console.log(error.response?.data || error.message);
+    }
+  };
+  const openCamera = async () => {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      cameraType: 'front',
+      quality: 0.8,
+      saveToPhotos: true,
+    });
+    if (result.didCancel) return;
+    if (result.errorCode) {
+      console.log('Camera Error:', result.errorMessage);
+    }
+    const image = result.assets[0];
+    console.log(image);
+  };
+  const openGallery = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+      selectionLimit: 1,
+    });
+    if (result.didCancel) return;
+    if (result.errorCode) {
+      console.log('Gallery error:', result.errorMessage);
+      return;
+    }
+    const image = result.assets[0];
+    console.log(image);
+  };
   // ---------------------------------
   return (
     <SafeAreaProvider>
@@ -33,9 +95,11 @@ export default function Products() {
           </Text>
           <View className="w-[100%] border-b border-white " />
           <View style={styles.Container}>
-            <View style={styles.ImageContainer}>
-              <Image style={styles.ImageStyle} source={image} />
-            </View>
+            <TouchableOpacity onPress={openCamera}>
+              <View style={styles.ImageContainer}>
+                <Image style={styles.ImageStyle} source={image} />
+              </View>
+            </TouchableOpacity>
             <View style={styles.ContentContainer}>
               <View
                 style={{
@@ -47,25 +111,31 @@ export default function Products() {
                 <Text style={styles.text}>Category</Text>
                 <TextInput
                   style={styles.TextInput}
+                  value={category}
+                  onChangeText={setCategory}
                   placeholder="Enter Category"
                   placeholderTextColor="gray"
                 />
                 <Text style={styles.text}>Name</Text>
                 <TextInput
                   style={styles.TextInput}
+                  value={name}
+                  onChangeText={setName}
                   placeholder="Enter Name"
                   placeholderTextColor="gray"
                 />
                 <Text style={styles.text}>Price</Text>
-               
                 <TextInput
                   keyboardType="numeric"
+                  value={price}
+                  onChangeText={setPrice}
                   style={styles.TextInput}
                   placeholder="Enter Price"
                   placeholderTextColor="gray"
                 />
                 {/* ADD PRODUCT BUTTON */}
                 <TouchableOpacity
+                  onPressIn={handleSubmit}
                   style={styles.button}
                   onPress={() => navigation.navigate('AddProduct')}
                 >

@@ -11,6 +11,7 @@ import AllBills from '../screens/AllBills.jsx';
 import Products from '../screens/Products.jsx';
 import Report from '../screens/Report.jsx';
 import Bill from '../screens/Bill.jsx';
+import Settings from '../screens/Settings.jsx';
 
 import settings from '../assets/icons/settings.png';
 import {
@@ -27,7 +28,7 @@ export default function AppStack() {
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: '#171717' },
         headerRight: () => (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
             <Image
               style={styles.settings}
               source={settings}
@@ -45,6 +46,7 @@ export default function AppStack() {
       <Stack.Screen name="AllBills" component={AllBills} />
       <Stack.Screen name="Products" component={Products} />
       <Stack.Screen name="Reports" component={Report} />
+      <Stack.Screen name="Settings" component={Settings} />
     </Stack.Navigator>
   );
 }
