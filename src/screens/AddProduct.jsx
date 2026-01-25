@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   TextInput,
-  FlatList,
   TouchableOpacity,
 } from 'react-native';
 import React, { useState } from 'react';
@@ -48,6 +47,7 @@ export default function Products() {
       Toast.show({
         type: 'error',
         text1: 'Error ❌',
+
       });
       console.log(error.response?.data || error.message);
     }
