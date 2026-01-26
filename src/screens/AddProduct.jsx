@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
@@ -45,6 +45,7 @@ export default function Products() {
       console.log(error.response?.data || error.message);
     }
   };
+ 
   const openCamera = async () => {
     const result = await launchCamera({
       mediaType: 'photo',

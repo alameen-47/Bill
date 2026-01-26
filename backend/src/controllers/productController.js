@@ -24,15 +24,17 @@ export const createProductController = async (req, res) => {
 
 export const getAllProductController = async (req, res) => {
   try {
-    const allProducts = await Product.find();
+    const allProducts = await Product.find().lean();
     res.status(200).json({
       success: true,
       message: 'All Products Fetched Succesfully',
-      data: allProducts,
+      products: allProducts,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: 'Error in GetAllProductController' });
+    res
+      .status(500)
+      .json({ succes: false, message: 'Error in GetAllProductController' });
   }
 };
 

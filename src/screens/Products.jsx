@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
@@ -15,25 +15,51 @@ import {
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 import { useNavigation } from '@react-navigation/native';
+import api from '../api/api';
+import { useAuth } from '../context/authContext';
 
 export default function Products() {
+  const [auth] = useAuth();
   const [search, setSearch] = useState('');
   const navigation = useNavigation();
-  const products = [
-    { id: 1, name: 'Apple', price: 50, emoji: '🍎' },
-    { id: 2, name: 'Banana', price: 20, emoji: '🍌' },
-    { id: 3, name: 'Orange', price: 30, emoji: '🍊' },
-    { id: 4, name: 'Grapes', price: 40, emoji: '🍇' },
-    { id: 5, name: 'Pineapple', price: 70, emoji: '🍍' },
-    { id: 6, name: 'Watermelon', price: 20, emoji: '🍉' },
-    { id: 7, name: 'Mango', price: 60, emoji: '🥭' },
-    { id: 8, name: 'Strawberry', price: 90, emoji: '🍓' },
-    { id: 9, name: 'Blueberry', price: 80, emoji: '🫐' },
-  ];
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  // const products = [
+  //   { id: 1, name: 'Apple', price: 50, emoji: '🍎' },
+  //   { id: 2, name: 'Banana', price: 20, emoji: '🍌' },
+  //   { id: 3, name: 'Orange', price: 30, emoji: '🍊' },
+  //   { id: 4, name: 'Grapes', price: 40, emoji: '🍇' },
+  //   { id: 5, name: 'Pineapple', price: 70, emoji: '🍍' },
+  //   { id: 6, name: 'Watermelon', price: 20, emoji: '🍉' },
+  //   { id: 7, name: 'Mango', price: 60, emoji: '🥭' },
+  //   { id: 8, name: 'Strawberry', price: 90, emoji: '🍓' },
+  //   { id: 9, name: 'Blueberry', price: 80, emoji: '🫐' },
+  // ];
+  const [products, setProducts] = useState([]);
+
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   // -------------------------------------------
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const token = auth.token;
+      try {
+        const res = await api.get('/api/v1/products/getAllProducts', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res?.data?.success) {
+          setProducts(res.data.products);
+        }
+      } catch (error) {
+        console.log('Error on Getting Products', error.message);
+      }
+    };
+    fetchProducts();
+  }, []);
+  useEffect(() => {
+    setFilteredProducts(products);
+  }, [products]);
+
+  console.log(Products, "'''''''''''PRODUCtsssss---------------");
   const searchData = search => {
     setSearch(search);
     const result = products.filter(item =>
@@ -75,10 +101,10 @@ export default function Products() {
         {/* PRODUCTS */}
         <FlatList
           data={filteredProducts}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
             <View style={styles.productCard}>
-              <Text style={styles.productImage}>{item.emoji}</Text>
+              {/* <Text style={styles.productImage}>{item.emoji}</Text> */}
               <Text style={{ fontSize: 25, color: 'white' }}>{item.name}</Text>
               <Text style={{ fontSize: 25, color: 'white' }}>
                 ₹ {item.price}.00
@@ -89,7 +115,7 @@ export default function Products() {
         {/* ADD PRODUCT BUTTON */}
         <TouchableOpacity
           style={styles.button}
-          onPress={()=>navigation.navigate('AddProduct')}
+          onPress={() => navigation.navigate('AddProduct')}
         >
           <Text style={styles.buttonText}>+ Add Product</Text>
         </TouchableOpacity>
