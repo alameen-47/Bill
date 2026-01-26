@@ -6,12 +6,16 @@ export const createProductController = async (req, res) => {
     const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
       res.status(400).json({
-        success: true,
+        success: false,
         message: 'Product with same name is Already Present',
       });
     }
     const product = await Product.create({ category, name, price });
-    res.json(product);
+    res.json({
+      success: true,
+      message: 'Product Created Succesfully',
+      product,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error on CreateProductController' });

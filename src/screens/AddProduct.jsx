@@ -1,27 +1,21 @@
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
 import image from '../assets/icons/image.png';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import api from '../api/api.js';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/authContext.js';
+import { useNavigation } from '@react-navigation/native';
 export default function Products() {
+  const navigation = useNavigation();
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
-  const navigation = useNavigation();
   const [auth] = useAuth();
   const token = auth.token;
   const handleSubmit = async () => {
@@ -36,18 +30,17 @@ export default function Products() {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       if (res.data.success) {
-        Toast.show({
+        await Toast.show({
           type: 'success',
           text1: 'Product Created Succesfully ✅',
         });
         console.log('Product Created Succesfully');
-        navigation.navigate('AllProducts');
+        navigation.navigate('Products');
       }
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Error ❌',
-
       });
       console.log(error.response?.data || error.message);
     }
