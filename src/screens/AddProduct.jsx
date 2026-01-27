@@ -45,7 +45,7 @@ export default function Products() {
       console.log(error.response?.data || error.message);
     }
   };
- 
+
   const openCamera = async () => {
     const result = await launchCamera({
       mediaType: 'photo',
@@ -89,11 +89,11 @@ export default function Products() {
           </Text>
           <View className="w-[100%] border-b border-white " />
           <View style={styles.Container}>
-            <TouchableOpacity onPress={openCamera}>
+            {/* <TouchableOpacity onPress={openCamera}>
               <View style={styles.ImageContainer}>
                 <Image style={styles.ImageStyle} source={image} />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View style={styles.ContentContainer}>
               <View
                 style={{

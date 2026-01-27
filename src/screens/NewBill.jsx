@@ -21,6 +21,7 @@ export default function NewBill() {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('');
+  const [filteredItems, setFilteredItems] = useState('');
   const categories = [
     {
       name: 'Fruits',
@@ -71,18 +72,16 @@ export default function NewBill() {
     categories[0].id,
   );
 
+  const selectedCategoryItems =
+    categories.find(cat => cat.id === selectedCategoryId)?.items || [];
   const searchData = search => {
     setSearch(search);
-    const result = categories.filter(cat =>
-      cat.items.some(item =>
-        item.name.toLowerCase().includes(search.toLowerCase()),
-      ),
+    const query = search.toLowerCase();
+    const result = categories.flatMap(cat =>
+      cat.items.filter(item => item.name.toLowerCase().includes(query)),
     );
     setFilteredItems(result);
   };
-  const selectedCategoryItems =
-    categories.find(cat => cat.id === selectedCategoryId)?.items || [];
-  console.log('+++++++++', selectedItem, '4444444444');
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -160,10 +159,11 @@ export default function NewBill() {
               <Text style={styles.image}>{item.emoji}</Text>;
             });
           })}
-
           {/* ////PRODUCTS//// */}
           <FlatList
-            data={selectedCategoryItems}
+            data={
+              filteredItems?.length > 0 ? filteredItems : selectedCategoryItems
+            }
             keyExtractor={item => item.name}
             horizontal={false}
             numColumns={2}
