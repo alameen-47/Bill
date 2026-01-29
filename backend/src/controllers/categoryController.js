@@ -37,7 +37,7 @@ export const getSingleCategoryController = async (req, res) => {
     const { categoryId } = req.params;
     if (!categoryId) {
       return res.status(400).json({
-        succes: false,
+        success: false,
         message: 'Category Id is Required',
       });
     }
