@@ -2,10 +2,10 @@ import categoryModel from '../models/categoryModel.js';
 
 export const createCategoryController = async (req, res) => {
   try {
-    const { categoryName } = req.body;
+    let { categoryName } = req.body;
     if (!categoryName) {
       return res.status(400).json({
-        succes: false,
+        success: false,
         message: 'Category Name is Required',
       });
     }
@@ -13,7 +13,7 @@ export const createCategoryController = async (req, res) => {
 
     const newCategory = await categoryModel.create({ categoryName });
     res.status(201).json({
-      succes: true,
+      success: true,
       message: 'New Category Created Succesfully',
       newCategory,
     });
