@@ -21,7 +21,7 @@ export default function Settings() {
       console.log(error.message || 'Error in logout function');
     }
   };
-
+  console.log(auth, 'AUTH');
   return (
     <SafeAreaProvider>
       <SafeAreaView

@@ -16,58 +16,62 @@ import {
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import api from '../api/api';
+import { useAuth } from '../context/authContext';
 
 export default function NewBill() {
+  const [auth] = useAuth('');
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('');
   const [filteredItems, setFilteredItems] = useState('');
-  const categories = [
-    {
-      name: 'Fruits',
-      id: 1,
-      items: [
-        { id: 1, name: 'Apple', emoji: '🍎' },
-        { id: 2, name: 'Banana', emoji: '🍌' },
-        { id: 3, name: 'Orange', emoji: '🍊' },
-        { id: 4, name: 'Grapes', emoji: '🍇' },
-        { id: 5, name: 'Mango', emoji: '🥭' },
-      ],
-    },
-    {
-      name: 'Vegetables',
-      id: 2,
-      items: [
-        { id: 6, name: 'Carrot', emoji: '🥕' },
-        { id: 7, name: 'Broccoli', emoji: ' 🥦' },
-        { id: 8, name: 'Potato', emoji: '🥔' },
-        { id: 9, name: 'Tomato', emoji: '🍅' },
-        { id: 10, name: 'Cucumber', emoji: '🥒' },
-      ],
-    },
-    {
-      name: 'Dairy',
-      id: 3,
-      items: [
-        { id: 11, name: 'Milk', emoji: '🥛' },
-        { id: 12, name: 'Cheese', emoji: '🧀' },
-        { id: 13, name: 'Yogurt', emoji: '🍦' },
-        { id: 14, name: 'Butter', emoji: '🧈' },
-        { id: 15, name: 'Ice Cream', emoji: '🍧' },
-      ],
-    },
-    {
-      name: 'Bakery',
-      id: 4,
-      items: [
-        { id: 16, name: 'Bread', emoji: '🍞' },
-        { id: 17, name: 'Croissant', emoji: '🥐' },
-        { id: 18, name: 'Bagel', emoji: '🥯' },
-        { id: 19, name: 'Muffin', emoji: '🧁' },
-        { id: 20, name: 'Cake', emoji: '🍰' },
-      ],
-    },
-  ];
+  const [categories, setCategories] = useState('');
+  // const categories = [
+  //   {
+  //     name: 'Fruits',
+  //     id: 1,
+  //     items: [
+  //       { id: 1, name: 'Apple', emoji: '🍎' },
+  //       { id: 2, name: 'Banana', emoji: '🍌' },
+  //       { id: 3, name: 'Orange', emoji: '🍊' },
+  //       { id: 4, name: 'Grapes', emoji: '🍇' },
+  //       { id: 5, name: 'Mango', emoji: '🥭' },
+  //     ],
+  //   },
+  //   {
+  //     name: 'Vegetables',
+  //     id: 2,
+  //     items: [
+  //       { id: 6, name: 'Carrot', emoji: '🥕' },
+  //       { id: 7, name: 'Broccoli', emoji: ' 🥦' },
+  //       { id: 8, name: 'Potato', emoji: '🥔' },
+  //       { id: 9, name: 'Tomato', emoji: '🍅' },
+  //       { id: 10, name: 'Cucumber', emoji: '🥒' },
+  //     ],
+  //   },
+  //   {
+  //     name: 'Dairy',
+  //     id: 3,
+  //     items: [
+  //       { id: 11, name: 'Milk', emoji: '🥛' },
+  //       { id: 12, name: 'Cheese', emoji: '🧀' },
+  //       { id: 13, name: 'Yogurt', emoji: '🍦' },
+  //       { id: 14, name: 'Butter', emoji: '🧈' },
+  //       { id: 15, name: 'Ice Cream', emoji: '🍧' },
+  //     ],
+  //   },
+  //   {
+  //     name: 'Bakery',
+  //     id: 4,
+  //     items: [
+  //       { id: 16, name: 'Bread', emoji: '🍞' },
+  //       { id: 17, name: 'Croissant', emoji: '🥐' },
+  //       { id: 18, name: 'Bagel', emoji: '🥯' },
+  //       { id: 19, name: 'Muffin', emoji: '🧁' },
+  //       { id: 20, name: 'Cake', emoji: '🍰' },
+  //     ],
+  //   },
+  // ];
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     categories[0].id,
   );
@@ -82,6 +86,19 @@ export default function NewBill() {
     );
     setFilteredItems(result);
   };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/api/v1/products/getAllProducts', {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        });
+        if (res.data.success) {
+          setCategories;
+        }
+      } catch (error) {}
+    };
+  }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView

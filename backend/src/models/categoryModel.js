@@ -1,12 +1,12 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import mongoose from 'mongoose';
 
-export default function categoryModel() {
-  return (
-    <View>
-      <Text>categoryModel</Text>
-      <Text>categoryModel</Text>
-      <Text>categoryModel</Text>
-    </View>
-  );
-}
+const categoryModel = new mongoose.Schema({
+  categoryName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+});
+export default mongoose.model('Category', categoryModel);
