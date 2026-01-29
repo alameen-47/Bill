@@ -67,7 +67,7 @@ export const deleteCategoryController = async (req, res) => {
         message: 'Category Id is Required',
       });
     }
-    await categoryModel.findByIdAndUpdate(categoryId);
+    await categoryModel.findByIdAndDelete(categoryId);
     return res.status(200).json({
       success: false,
       message: 'Category Deleted Succesfully',
