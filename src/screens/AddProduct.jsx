@@ -1,4 +1,11 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -11,12 +18,21 @@ import api from '../api/api.js';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/authContext.js';
 import { useNavigation } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { greenPlus } from '../assets/icons/greenPlus.png';
 export default function Products() {
   const navigation = useNavigation();
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [auth] = useAuth();
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: 'Apple', value: 'apple' },
+    { label: 'Banana', value: 'banana' },
+  ]);
+
   const token = auth.token;
   const handleSubmit = async () => {
     try {
@@ -46,40 +62,12 @@ export default function Products() {
     }
   };
 
-  const openCamera = async () => {
-    const result = await launchCamera({
-      mediaType: 'photo',
-      cameraType: 'front',
-      quality: 0.8,
-      saveToPhotos: true,
-    });
-    if (result.didCancel) return;
-    if (result.errorCode) {
-      console.log('Camera Error:', result.errorMessage);
-    }
-    const image = result.assets[0];
-    console.log(image);
-  };
-  const openGallery = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 0.8,
-      selectionLimit: 1,
-    });
-    if (result.didCancel) return;
-    if (result.errorCode) {
-      console.log('Gallery error:', result.errorMessage);
-      return;
-    }
-    const image = result.assets[0];
-    console.log(image);
-  };
   // ---------------------------------
   return (
     <SafeAreaProvider>
       <SafeAreaView
         style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start  items-start"
+        className="bg-Cdarkgray  w-screen flex-1 flex justify-start  items-start"
       >
         <View
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -89,11 +77,6 @@ export default function Products() {
           </Text>
           <View className="w-[100%] border-b border-white " />
           <View style={styles.Container}>
-            {/* <TouchableOpacity onPress={openCamera}>
-              <View style={styles.ImageContainer}>
-                <Image style={styles.ImageStyle} source={image} />
-              </View>
-            </TouchableOpacity> */}
             <View style={styles.ContentContainer}>
               <View
                 style={{
@@ -102,14 +85,39 @@ export default function Products() {
                   marginBottom: hp('2%'),
                 }}
               >
-                <Text style={styles.text}>Category</Text>
-                <TextInput
-                  style={styles.TextInput}
-                  value={category}
-                  onChangeText={setCategory}
-                  placeholder="Enter Category"
-                  placeholderTextColor="gray"
+                <Text style={styles.text}>Add Category</Text>
+                <View style={{ flexDirection: 'column' }}>
+                  <TextInput
+                    style={styles.TextInput}
+                    value={category}
+                    onChangeText={setCategory}
+                    placeholder="Enter Category"
+                    placeholderTextColor="gray"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: 'green',
+                      height: 50,
+                      width: 50,
+                      marginTop: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={greenPlus} />
+                  </TouchableOpacity>
+                </View>
+                <View className="w-[100%] border-b border-white " />
+                <Text style={styles.text}>Select Category</Text>
+                <DropDownPicker
+                  open={open}
+                  value={value}
+                  items={items}
+                  onPress={() => setOpen(!open)}
+                  setValue={setValue}
+                  setItems={setItems}
                 />
+
                 <Text style={styles.text}>Name</Text>
                 <TextInput
                   style={styles.TextInput}

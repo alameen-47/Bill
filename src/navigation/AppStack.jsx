@@ -23,10 +23,12 @@ const Stack = createNativeStackNavigator();
 export default function AppStack() {
   return (
     <Stack.Navigator
+      initialRouteName="AddProduct"
       screenOptions={({ navigation }) => ({
         headerTitle: '',
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: '#171717' },
+
         headerRight: () => (
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
             <Image
