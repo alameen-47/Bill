@@ -34,7 +34,7 @@ export const getAllProductController = async (req, res) => {
     console.log(error);
     res
       .status(500)
-      .json({ succes: false, message: 'Error in GetAllProductController' });
+      .json({ success: false, message: 'Error in GetAllProductController' });
   }
 };
 
@@ -49,7 +49,7 @@ export const getSingleProductController = async (req, res) => {
       });
     }
     return res.status(200).json({
-      succes: false,
+      success: false,
       message: 'Product fetched succesfully',
       data: singleProduct,
     });
@@ -57,7 +57,7 @@ export const getSingleProductController = async (req, res) => {
     console.log(error);
     res
       .status(500)
-      .json({ succes: false, message: 'Error in GetSingleProductController' });
+      .json({ success: false, message: 'Error in GetSingleProductController' });
   }
 };
 
@@ -75,12 +75,12 @@ export const singleProductUpdateController = async (req, res) => {
     );
     if (!updatedProduct) {
       return res.status(404).json({
-        succes: false,
+        success: false,
         message: 'Product not found',
       });
     }
     res.status(200).json({
-      succes: true,
+      success: true,
       message: 'Product updated successfully',
       product: updatedProduct,
     });
@@ -98,7 +98,7 @@ export const productDeleteController = async (req, res) => {
     await Product.findByIdAndDelete(id);
     res
       .status(200)
-      .json({ succes: true, message: 'Product Deleted Succesfully' });
+      .json({ success: true, message: 'Product Deleted Succesfully' });
   } catch (error) {
     console.error('Error in Delete Controller: ', error);
   }

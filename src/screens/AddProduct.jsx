@@ -19,7 +19,7 @@ import Toast from 'react-native-toast-message';
 import { useAuth } from '../context/authContext.js';
 import { useNavigation } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { greenPlus } from '../assets/icons/greenPlus.png';
+import greenPlus from '../assets/icons/greenPlus.png';
 export default function Products() {
   const navigation = useNavigation();
   const [category, setCategory] = useState('');
@@ -32,8 +32,27 @@ export default function Products() {
     { label: 'Apple', value: 'apple' },
     { label: 'Banana', value: 'banana' },
   ]);
-
   const token = auth.token;
+
+  const addCategory = async () => {
+    try {
+      const res = await api.post(
+        '/api/v1/category/createCategory',
+        { category },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (res.status.success) {
+        await Toast.show({
+          type: 'success',
+          text1: 'Category Created Succesfully ✅',
+        });
+        console.log('Category Created Succesfully');
+      }
+    } catch (error) {
+      console.log('Error on addCategory', error.message);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const res = await api.post(
@@ -86,37 +105,43 @@ export default function Products() {
                 }}
               >
                 <Text style={styles.text}>Add Category</Text>
-                <View style={{ flexDirection: 'column' }}>
+                <View style={{ flexDirection: 'row' }}>
                   <TextInput
-                    style={styles.TextInput}
+                    style={[styles.TextInput, { width: '85%' }]}
                     value={category}
                     onChangeText={setCategory}
                     placeholder="Enter Category"
                     placeholderTextColor="gray"
                   />
                   <TouchableOpacity
+                    onPress={addCategory}
                     style={{
-                      backgroundColor: 'green',
-                      height: 50,
-                      width: 50,
-                      marginTop: 10,
+                      backgroundColor: 'white',
+                      borderRadius: '30%',
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}
                   >
-                    <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={greenPlus} />
+                    <Image
+                      style={{ width: '45' }}
+                      resizeMode="contain"
+                      source={greenPlus}
+                    />
                   </TouchableOpacity>
                 </View>
                 <View className="w-[100%] border-b border-white " />
                 <Text style={styles.text}>Select Category</Text>
-                <DropDownPicker
-                  open={open}
-                  value={value}
-                  items={items}
-                  onPress={() => setOpen(!open)}
-                  setValue={setValue}
-                  setItems={setItems}
-                />
+                <View>
+                  <DropDownPicker
+                    placeholder="Select a Category"
+                    open={open}
+                    value={value}
+                    items={items}
+                    onPress={() => setOpen(!open)}
+                    setValue={setValue}
+                    setItems={setItems}
+                  />
+                </View>
 
                 <Text style={styles.text}>Name</Text>
                 <TextInput
