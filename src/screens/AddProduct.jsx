@@ -41,15 +41,19 @@ export default function Products() {
         { category },
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      if (res.status.success) {
-        await Toast.show({
+      if (res.data.success) {
+        Toast.show({
           type: 'success',
           text1: 'Category Created Succesfully ✅',
         });
-        console.log('Category Created Succesfully');
+        console.log(res.data.message);
       }
     } catch (error) {
       console.log('Error on addCategory', error.message);
+      Toast.show({
+        type: 'error',
+        text1: error.response?.data?.message || 'Something went wrong',
+      });
     }
   };
 

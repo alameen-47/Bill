@@ -2,29 +2,31 @@ import categoryModel from '../models/categoryModel.js';
 
 export const createCategoryController = async (req, res) => {
   try {
-    let { categoryName } = req.body;
-    if (!categoryName) {
+    let { category } = req.body;
+
+    if (!category) {
       return res.status(400).json({
         success: false,
         message: 'Category Name is Required',
       });
     }
-    categoryName = categoryName.trim().toLowerCase();
 
-    const newCategory = await categoryModel.create({ categoryName });
-    res.status(201).json({
+    const existingCategory = await categoryModel.findOne({ category });
+    if (existingCategory) {
+      return res.status(400).json({
+        success: false,
+        message: 'Category Name Already Exists',
+      });
+    }
+
+    const newCategory = await categoryModel.create({ category });
+
+    return res.status(201).json({
       success: true,
-      message: 'New Category Created Succesfully',
+      message: 'New Category Created Successfully',
       newCategory,
     });
   } catch (error) {
-    // Duplicate key error from MongoDB
-    if (error.code === 11000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Category Already Exists',
-      });
-    }
     return res.status(500).json({
       success: false,
       message: 'Error on CategoryController',

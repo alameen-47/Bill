@@ -5,7 +5,7 @@ export const createProductController = async (req, res) => {
     const { category, name, price } = req.body;
     const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: 'Product with same name is Already Present',
       });
