@@ -31,6 +31,8 @@ export default function Products() {
   const [allCategory, setAllCategory] = useState([]);
   const token = auth.token;
 
+  console.log(value, '----VALUE----');
+
   // ADD CATEGORY
   const addCategory = async () => {
     try {
@@ -44,9 +46,9 @@ export default function Products() {
           type: 'success',
           text1: 'Category Created Succesfully ✅',
         });
+        await getAllCategory();
         console.log(res.data.message);
       }
-      await getAllCategory();
     } catch (error) {
       console.log('Error on addCategory', error.message);
       Toast.show({
@@ -64,7 +66,7 @@ export default function Products() {
       if (res.data.success) {
         const formattedData = res.data.allCategory.map(item => ({
           label: item.category,
-          value: item._id,
+          value: item.category,
         }));
 
         setAllCategory(formattedData);
@@ -77,12 +79,13 @@ export default function Products() {
   useEffect(() => {
     getAllCategory();
   }, []);
+
   const handleSubmit = async () => {
     try {
       const res = await api.post(
         '/api/v1/products/createProduct',
         {
-          category,
+          category: value,
           name,
           price,
         },
