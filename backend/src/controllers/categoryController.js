@@ -81,3 +81,17 @@ export const deleteCategoryController = async (req, res) => {
     });
   }
 };
+export const getAllCategoryController = async (req, res) => {
+  try {
+    const allCategory = await categoryModel.find();
+    return res
+      .status(200)
+      .json({ success: true, message: 'Fetched All Category', allCategory });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Error in GetAllCategoryContoller',
+      error,
+    });
+  }
+};

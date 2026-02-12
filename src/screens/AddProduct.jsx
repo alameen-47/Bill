@@ -28,12 +28,10 @@ export default function Products() {
   const [auth] = useAuth();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: 'Apple', value: 'apple' },
-    { label: 'Banana', value: 'banana' },
-  ]);
+  const [allCategory, setAllCategory] = useState([]);
   const token = auth.token;
 
+  // ADD CATEGORY
   const addCategory = async () => {
     try {
       const res = await api.post(
@@ -48,6 +46,7 @@ export default function Products() {
         });
         console.log(res.data.message);
       }
+      await getAllCategory();
     } catch (error) {
       console.log('Error on addCategory', error.message);
       Toast.show({
@@ -56,7 +55,28 @@ export default function Products() {
       });
     }
   };
+  // GET ALL CATEGORY
+  const getAllCategory = async () => {
+    try {
+      const res = await api.get('/api/v1/category/getAllCategory', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        const formattedData = res.data.allCategory.map(item => ({
+          label: item.category,
+          value: item._id,
+        }));
 
+        setAllCategory(formattedData);
+      }
+    } catch (error) {
+      console.log('Error in getAllCategory ', error);
+    }
+  };
+
+  useEffect(() => {
+    getAllCategory();
+  }, []);
   const handleSubmit = async () => {
     try {
       const res = await api.post(
@@ -140,10 +160,10 @@ export default function Products() {
                     placeholder="Select a Category"
                     open={open}
                     value={value}
-                    items={items}
+                    items={allCategory}
                     onPress={() => setOpen(!open)}
                     setValue={setValue}
-                    setItems={setItems}
+                    setItems={setAllCategory}
                   />
                 </View>
 
