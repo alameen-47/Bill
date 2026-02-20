@@ -1,3 +1,4 @@
+import productModel from '../models/productModel.js';
 import Product from '../models/productModel.js';
 
 export const createProductController = async (req, res) => {
@@ -101,5 +102,24 @@ export const productDeleteController = async (req, res) => {
       .json({ success: true, message: 'Product Deleted Succesfully' });
   } catch (error) {
     console.error('Error in Delete Controller: ', error);
+  }
+};
+
+export const getCategoryProductController = async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+    const products = await productModel.find({ category: categoryName });
+    return res.status(200).json({
+      success: true,
+      message: `Products of ${categoryName} fetched successfully`,
+      products,
+    });
+  } catch (error) {
+    console.log('Error in Backend getCategoryProductController - ', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error in Backend getCategoryProductController - ',
+      error,
+    });
   }
 };

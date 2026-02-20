@@ -8,6 +8,7 @@ import {
   Modal,
   Alert,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -26,6 +27,10 @@ export default function NewBill() {
   const [selectedItem, setSelectedItem] = useState('');
   const [filteredItems, setFilteredItems] = useState('');
   const [categories, setCategories] = useState('');
+  const [products, setProducts] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategoryItems, setSelectedCategoryItems] = useState('');
+  const [loading, setLoading] = useState(false);
   // const categories = [
   //   {
   //     name: 'Fruits',
@@ -72,32 +77,67 @@ export default function NewBill() {
   //     ],
   //   },
   // ];
-  const [selectedCategoryId, setSelectedCategoryId] = useState(
-    categories[0].id,
-  );
 
-  const selectedCategoryItems =
-    categories.find(cat => cat.id === selectedCategoryId)?.items || [];
   const searchData = search => {
     setSearch(search);
     const query = search.toLowerCase();
-    const result = categories.flatMap(cat =>
-      cat.items.filter(item => item.name.toLowerCase().includes(query)),
+    const result = products.flatMap(product =>
+      product.items.filter(item => item.name.toLowerCase().includes(query)),
     );
     setFilteredItems(result);
   };
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await api.get('/api/v1/products/getAllProducts', {
+  //FETCH-PRODUCTS
+  const fetchProducts = async () => {
+    try {
+      const res = await api.get('/api/v1/products/getAllProducts', {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      if (res.data.success) {
+        setProducts(res.data.products);
+      }
+      console.log(res.data, 'RES PRODUCTS DATA');
+    } catch (error) {
+      console.log('Error in fetchProduct Frontend', error);
+    }
+  };
+  //FETCH-ALLCATEGORIES
+  const fetchAllCategories = async () => {
+    try {
+      const res = await api.get('/api/v1/category/getAllCategory', {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      if (res.data.success) {
+        setCategories(res.data.allCategory);
+      }
+      console.log(res.data, 'RES CATEGORIES DATA');
+    } catch (error) {
+      console.log('Error in fetchAllcategory Frontend', error);
+    }
+  };
+  //FETCH-CATEGORY-PRODUCTS
+  const fethCategoryProducts = async selectedCategory => {
+    try {
+      setLoading(true);
+      const res = await api.get(
+        `api/v1/category/getCategoryProducts/${selectedCategory}`,
+        {
           headers: { Authorization: `Bearer ${auth.token}` },
-        });
-        if (res.data.success) {
-          setCategories;
-        }
-      } catch (error) {}
-    };
+        },
+      );
+      if (res.data.success) {
+        setSelectedCategoryItems(res.data.products);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log('Error on fetchCategoryProduct frontend - ', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchAllCategories();
   }, []);
+  console.log(selectedCategory, '------SELECTED CATEGORY------');
 
   return (
     <SafeAreaProvider>
@@ -131,17 +171,20 @@ export default function NewBill() {
                 data={categories}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={item => item._id.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => setSelectedCategoryId(item.id)}
+                    onPress={() => {
+                      setSelectedCategory(item.category);
+                      fethCategoryProducts(item.category);
+                    }}
                   >
                     <Text
                       style={{ fontSize: wp('5%') }}
                       className=" text-white text-xl font-semibold"
                     >
-                      {item.name.toUpperCase()}
+                      {item.category.toUpperCase()}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -171,11 +214,11 @@ export default function NewBill() {
               className="text-white text-xl Appfont-semibold  "
             />
           </View>
-          {categories.map(category => {
-            category.items.map(item => {
-              <Text style={styles.image}>{item.emoji}</Text>;
-            });
-          })}
+          {loading && (
+            <View className=" m-auto justify-center items-center bg-black/20">
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
           {/* ////PRODUCTS//// */}
           <FlatList
             data={
