@@ -219,28 +219,43 @@ export default function Products() {
           {/* ////PRODUCTS//// */}
           <FlatList
             data={
-              filteredItems?.length > 0 ? filteredItems : selectedCategoryItems
+              filteredItems?.length > 0
+                ? filteredItems
+                : selectedCategoryItems?.length > 0
+                  ? selectedCategoryItems
+                  : products
             }
             keyExtractor={item => item.name}
             horizontal={false}
-            numColumns={2}
+            numColumns={1}
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={styles.imageContainer}
+                style={styles.productCardContainer}
                 onPress={() => {
-                  setSelectedItem(item);
-                  setModalVisible(!modalVisible);
+                  // NavigationBar.navigate('NewBill', { product: item });
+                  // setSelectedItem(item);
+                  // setModalVisible(!modalVisible);
                 }}
               >
-                <Text style={styles.image}>{item.emoji}</Text>
-                <Text
-                  style={{
-                    fontSize: wp('4%'),
-                    color: 'white',
-                  }}
-                >
-                  {item.name}
-                </Text>
+                {/* <Text style={styles.image}>{item.emoji}</Text> */}
+                <View className="px-2 w-full flex-row justify-between items-center">
+                  <Text
+                    style={{
+                      fontSize: wp('5%'),
+                      color: 'white',
+                    }}
+                  >
+                    {item.name.toUpperCase()}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: wp('5%'),
+                      color: 'orange',
+                    }}
+                  >
+                    {item.price}/-
+                  </Text>
+                </View>
               </TouchableOpacity>
             )}
           />
@@ -323,11 +338,11 @@ const styles = {
     width: wp('40%'),
     backgroundColor: '#143227',
   },
-  imageContainer: {
+  productCardContainer: {
     backgroundColor: '#143227',
-    width: wp(40),
-    height: hp(15),
-    borderRadius: 20,
+    width: wp(80),
+    height: hp(8),
+    borderRadius: 10,
     margin: wp(2),
     display: 'flex',
     itemsAlign: 'center',

@@ -1,21 +1,21 @@
 {
-    "editor.suggest.showSnippets": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": false,
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.snippetSuggestions": "top",
-"files.exclude": {
-  "**/node_modules": true,
-  "**/dist": true,
-  "**/build": true
-},
-"search.exclude": {
-  "**/node_modules": true,
-  "**/dist": true,
-  "**/build": true
-},
-"postman.settings.dotenv-detection-notification-visibility": false
-
+  "editor.snippetSuggestions": "top",
+  "editor.suggest.showSnippets": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.snippetSuggestions": "top",
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

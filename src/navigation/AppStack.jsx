@@ -5,10 +5,10 @@ import Login from '../screens/Login.jsx';
 import Signup from '../screens/Signup.jsx';
 import HomeScreen from '../screens/HomeScreen.jsx';
 import Profile from '../screens/Profile.jsx';
-import NewBill from '../screens/Products.jsx';
+import NewBill from '../screens/NewBill.jsx';
 import AddProduct from '../screens/AddProduct.jsx';
 import AllBills from '../screens/AllBills.jsx';
-import Products from '../screens/NewBill.jsx';
+import Products from '../screens/Products.jsx';
 import Report from '../screens/Report.jsx';
 import Bill from '../screens/Bill.jsx';
 import Settings from '../screens/Settings.jsx';
@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator();
 export default function AppStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Products"
+      initialRouteName="NewBill"
       screenOptions={({ navigation }) => ({
         headerTitle: '',
         headerTintColor: '#fff',

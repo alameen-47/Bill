@@ -19,6 +19,7 @@ import api from '../api/api';
 import { useAuth } from '../context/authContext';
 
 export default function NewBill() {
+  // const { product } = route.params;
   const [auth] = useAuth();
   const [search, setSearch] = useState('');
   const navigation = useNavigation();
@@ -99,27 +100,28 @@ export default function NewBill() {
           />
         </View>
         {/* PRODUCTS */}
-        <FlatList
-          data={filteredProducts}
+
+        {/* <FlatList
+          data={product}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
             <View style={styles.productCard}>
-              {/* <Text style={styles.productImage}>{item.emoji}</Text> */}
               <Text style={{ fontSize: 25, color: 'white' }}>{item.name}</Text>
               <Text style={{ fontSize: 25, color: 'white' }}>
                 ₹ {item.price}.00
               </Text>
             </View>
           )}
-        />
-        {/* ADD NEW PRODUCT TO BILL */}
+        /> */}
 
+        {/* ADD NEW PRODUCT TO BILL */}
+        <View></View>
         {/* ADD NEW PRODUCT TO BILL BUTTON */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('AddProduct')}
+          onPress={() => navigation.navigate('Products')}
         >
-          <Text style={styles.buttonText}>+</Text>
+          <Text style={styles.buttonText}>+ Add Product</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -145,9 +147,9 @@ const styles = {
   button: {
     backgroundColor: '#DA7320',
     padding: 15,
-    borderRadius: 100,
-    left: '80%',
-    width: '20%',
+    borderRadius: 10,
+    marginTop: 10,
+    width: '100%',
   },
   buttonText: {
     color: 'white',
