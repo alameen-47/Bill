@@ -5,10 +5,10 @@ import Login from '../screens/Login.jsx';
 import Signup from '../screens/Signup.jsx';
 import HomeScreen from '../screens/HomeScreen.jsx';
 import Profile from '../screens/Profile.jsx';
-import NewBill from '../screens/NewBill.jsx';
+import NewBill from '../screens/Products.jsx';
 import AddProduct from '../screens/AddProduct.jsx';
 import AllBills from '../screens/AllBills.jsx';
-import Products from '../screens/Products.jsx';
+import Products from '../screens/NewBill.jsx';
 import Report from '../screens/Report.jsx';
 import Bill from '../screens/Bill.jsx';
 import Settings from '../screens/Settings.jsx';
@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator();
 export default function AppStack() {
   return (
     <Stack.Navigator
-      initialRouteName="NewBill"
+      initialRouteName="Products"
       screenOptions={({ navigation }) => ({
         headerTitle: '',
         headerTintColor: '#fff',
@@ -42,11 +42,11 @@ export default function AppStack() {
     >
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="NewBill" component={NewBill} />
+      <Stack.Screen name="Products" component={Products} />
       <Stack.Screen name="Bill" component={Bill} />
       <Stack.Screen name="AddProduct" component={AddProduct} />
       <Stack.Screen name="AllBills" component={AllBills} />
-      <Stack.Screen name="Products" component={Products} />
+      <Stack.Screen name="NewBill" component={NewBill} />
       <Stack.Screen name="Reports" component={Report} />
       <Stack.Screen name="Settings" component={Settings} />
     </Stack.Navigator>
