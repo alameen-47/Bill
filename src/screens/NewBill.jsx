@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
@@ -15,59 +15,19 @@ import {
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
 import { useNavigation } from '@react-navigation/native';
-import api from '../api/api';
 import { useAuth } from '../context/authContext';
-
-export default function NewBill() {
-  // const { product } = route.params;
+import { BillContext } from '../context/billContext';
+import orangePlus from '../assets/icons/orangePlus.png';
+import orangeMinus from '../assets/icons/orangeMinus.png';
+export default function NewBill({ route }) {
   const [auth] = useAuth();
   const [search, setSearch] = useState('');
   const navigation = useNavigation();
-  // const products = [
-  //   { id: 1, name: 'Apple', price: 50, emoji: '🍎' },
-  //   { id: 2, name: 'Banana', price: 20, emoji: '🍌' },
-  //   { id: 3, name: 'Orange', price: 30, emoji: '🍊' },
-  //   { id: 4, name: 'Grapes', price: 40, emoji: '🍇' },
-  //   { id: 5, name: 'Pineapple', price: 70, emoji: '🍍' },
-  //   { id: 6, name: 'Watermelon', price: 20, emoji: '🍉' },
-  //   { id: 7, name: 'Mango', price: 60, emoji: '🥭' },
-  //   { id: 8, name: 'Strawberry', price: 90, emoji: '🍓' },
-  //   { id: 9, name: 'Blueberry', price: 80, emoji: '🫐' },
-  // ];
   const [products, setProducts] = useState([]);
-
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const { billItems, decreaseQty, increaseQty, total } =
+    useContext(BillContext);
 
   // -------------------------------------------
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const token = auth.token;
-      try {
-        const res = await api.get('/api/v1/products/getAllProducts', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res?.data?.success) {
-          setProducts(res.data.products);
-        }
-      } catch (error) {
-        console.log('Error on Getting Products', error.message);
-      }
-    };
-    fetchProducts();
-  }, []);
-  useEffect(() => {
-    setFilteredProducts(products);
-  }, [products]);
-
-  console.log(products, "'''''''''''PRODUCtsssss---------------");
-  const searchData = search => {
-    setSearch(search);
-    const result = products.filter(item =>
-      item.name.toLowerCase().includes(search.toLowerCase()),
-    );
-    setFilteredProducts(result);
-  };
 
   // ---------------------------------
   return (
@@ -84,7 +44,7 @@ export default function NewBill() {
           </Text>
           <View className="w-[100%] border-b border-white " />
         </View>
-        {/* ///////SEARCHBAR////// */}
+        {/* ///////SEARCHBAR//////
         <View className="bg-Clightgray w-full h-[rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
           <Image
             resizeMode="contain"
@@ -98,24 +58,41 @@ export default function NewBill() {
             onChangeText={searchData}
             className="text-white text-xl Appfont-semibold  "
           />
-        </View>
+        </View> */}
         {/* PRODUCTS */}
-
-        {/* <FlatList
-          data={product}
+        <FlatList
+          data={billItems}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
             <View style={styles.productCard}>
-              <Text style={{ fontSize: 25, color: 'white' }}>{item.name}</Text>
-              <Text style={{ fontSize: 25, color: 'white' }}>
-                ₹ {item.price}.00
-              </Text>
+              <View>
+                <Text
+                  style={{ fontSize: 25, color: 'white', fontWeight: '500' }}
+                >
+                  {item.name.toUpperCase()}
+                </Text>
+                <Text style={{ fontSize: 20, color: 'white' }}>
+                  ₹ {item.price}.00
+                </Text>
+              </View>
+              <View className="flex-row text-center justify-center align-middle items-center ">
+                <TouchableOpacity onPress={() => decreaseQty(item._id)}>
+                  <Image source={orangeMinus} style={styles.quantityButtons} />
+                </TouchableOpacity>
+                <Text className="text-white flex items mx-3 text-[20px]">
+                  {item.quantity}
+                </Text>
+                <TouchableOpacity onPress={() => increaseQty(item._id)}>
+                  <Image source={orangePlus} style={styles.quantityButtons} />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
-        /> */}
-
+        />
         {/* ADD NEW PRODUCT TO BILL */}
-        <View></View>
+        <View>
+          <Text>{total}</Text>
+        </View>
         {/* ADD NEW PRODUCT TO BILL BUTTON */}
         <TouchableOpacity
           style={styles.button}
@@ -156,5 +133,8 @@ const styles = {
     fontSize: 28,
     textAlign: 'center',
     fontWeight: '600',
+  },
+  quantityButtons: {
+    color: 'white',
   },
 };

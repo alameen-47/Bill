@@ -10,7 +10,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,6 +19,8 @@ import searchImg from '../assets/icons/search.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import api from '../api/api';
 import { useAuth } from '../context/authContext';
+import { useNavigation } from '@react-navigation/native';
+import { BillContext } from '../context/billContext';
 
 export default function Products() {
   const [auth] = useAuth('');
@@ -31,6 +33,8 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCategoryItems, setSelectedCategoryItems] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const { addItem } = useContext(BillContext);
   // const categories = [
   //   {
   //     name: 'Fruits',
@@ -232,7 +236,8 @@ export default function Products() {
               <TouchableOpacity
                 style={styles.productCardContainer}
                 onPress={() => {
-                  // NavigationBar.navigate('NewBill', { product: item });
+                  addItem(item);
+                  navigation.goBack();
                   // setSelectedItem(item);
                   // setModalVisible(!modalVisible);
                 }}
