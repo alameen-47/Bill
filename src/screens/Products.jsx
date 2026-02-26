@@ -35,52 +35,6 @@ export default function Products() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const { addItem } = useContext(BillContext);
-  // const categories = [
-  //   {
-  //     name: 'Fruits',
-  //     id: 1,
-  //     items: [
-  //       { id: 1, name: 'Apple', emoji: '🍎' },
-  //       { id: 2, name: 'Banana', emoji: '🍌' },
-  //       { id: 3, name: 'Orange', emoji: '🍊' },
-  //       { id: 4, name: 'Grapes', emoji: '🍇' },
-  //       { id: 5, name: 'Mango', emoji: '🥭' },
-  //     ],
-  //   },
-  //   {
-  //     name: 'Vegetables',
-  //     id: 2,
-  //     items: [
-  //       { id: 6, name: 'Carrot', emoji: '🥕' },
-  //       { id: 7, name: 'Broccoli', emoji: ' 🥦' },
-  //       { id: 8, name: 'Potato', emoji: '🥔' },
-  //       { id: 9, name: 'Tomato', emoji: '🍅' },
-  //       { id: 10, name: 'Cucumber', emoji: '🥒' },
-  //     ],
-  //   },
-  //   {
-  //     name: 'Dairy',
-  //     id: 3,
-  //     items: [
-  //       { id: 11, name: 'Milk', emoji: '🥛' },
-  //       { id: 12, name: 'Cheese', emoji: '🧀' },
-  //       { id: 13, name: 'Yogurt', emoji: '🍦' },
-  //       { id: 14, name: 'Butter', emoji: '🧈' },
-  //       { id: 15, name: 'Ice Cream', emoji: '🍧' },
-  //     ],
-  //   },
-  //   {
-  //     name: 'Bakery',
-  //     id: 4,
-  //     items: [
-  //       { id: 16, name: 'Bread', emoji: '🍞' },
-  //       { id: 17, name: 'Croissant', emoji: '🥐' },
-  //       { id: 18, name: 'Bagel', emoji: '🥯' },
-  //       { id: 19, name: 'Muffin', emoji: '🧁' },
-  //       { id: 20, name: 'Cake', emoji: '🍰' },
-  //     ],
-  //   },
-  // ];
 
   const searchData = search => {
     setSearch(search);

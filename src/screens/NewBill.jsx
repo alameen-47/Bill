@@ -19,12 +19,13 @@ import { useAuth } from '../context/authContext';
 import { BillContext } from '../context/billContext';
 import orangePlus from '../assets/icons/orangePlus.png';
 import orangeMinus from '../assets/icons/orangeMinus.png';
+import trash from '../assets/icons/trash.png';
 export default function NewBill({ route }) {
   const [auth] = useAuth();
   const [search, setSearch] = useState('');
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-  const { billItems, decreaseQty, increaseQty, total } =
+  const { billItems, decreaseQty, increaseQty, clearBill, total } =
     useContext(BillContext);
 
   // -------------------------------------------
@@ -77,7 +78,11 @@ export default function NewBill({ route }) {
               </View>
               <View className="flex-row text-center justify-center align-middle items-center ">
                 <TouchableOpacity onPress={() => decreaseQty(item._id)}>
-                  <Image source={orangeMinus} style={styles.quantityButtons} />
+                  <Image
+                    source={orangeMinus}
+                    resizeMode="contain"
+                    style={styles.quantityButtons}
+                  />
                 </TouchableOpacity>
                 <Text className="text-white flex items mx-3 text-[20px]">
                   {item.quantity}
@@ -89,9 +94,16 @@ export default function NewBill({ route }) {
             </View>
           )}
         />
-        {/* ADD NEW PRODUCT TO BILL */}
-        <View>
-          <Text>{total}</Text>
+
+        <View className="w-full flex flex-row justify-between align-middle items-center">
+          <TouchableOpacity onPress={clearBill}>
+            <Image
+              source={trash}
+              style={styles.trashCan}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <Text className="text-white text-3xl">Total : {total}/-</Text>
         </View>
         {/* ADD NEW PRODUCT TO BILL BUTTON */}
         <TouchableOpacity
@@ -136,5 +148,12 @@ const styles = {
   },
   quantityButtons: {
     color: 'white',
+  },
+  trashCan: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 3,
+    height: '50',
+    width: '40',
   },
 };
