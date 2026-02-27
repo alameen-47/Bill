@@ -94,16 +94,9 @@ export default function NewBill({ route }) {
             </View>
           )}
         />
-
-        <View className="w-full flex flex-row justify-between align-middle items-center">
-          <TouchableOpacity onPress={clearBill}>
-            <Image
-              source={trash}
-              style={styles.trashCan}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <Text className="text-white text-3xl">Total : {total}/-</Text>
+        <View className="w-full flex-row justify-between items-center align-middle">
+          <Text className="text-white text-3xl font-bold">Total : </Text>
+          <Text className="text-white text-3xl"> {total}/-</Text>
         </View>
         {/* ADD NEW PRODUCT TO BILL BUTTON */}
         <TouchableOpacity
@@ -112,6 +105,26 @@ export default function NewBill({ route }) {
         >
           <Text style={styles.buttonText}>+ Add Product</Text>
         </TouchableOpacity>
+
+        <View className="w-full flex flex-row justify-between  items-center">
+          <TouchableOpacity onPress={clearBill}>
+            <Image
+              source={trash}
+              style={styles.trashCan}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          💾
+          <TouchableOpacity className=" bg-[#DA7320] p-2  rounded-lg">
+            <Text style={styles.buttonText}>💾 SAVE</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className=" bg-[#DA7320] p-2 rounded-lg"
+            onPress={() => navigation.navigate('Reciept')}
+          >
+            <Text style={styles.buttonText}>🖨️ PRINT</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -137,7 +150,7 @@ const styles = {
     backgroundColor: '#DA7320',
     padding: 15,
     borderRadius: 10,
-    marginTop: 10,
+    marginVertical: 10,
     width: '100%',
   },
   buttonText: {

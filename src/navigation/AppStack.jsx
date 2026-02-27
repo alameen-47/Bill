@@ -12,6 +12,7 @@ import Products from '../screens/Products.jsx';
 import Report from '../screens/Report.jsx';
 import Bill from '../screens/Bill.jsx';
 import Settings from '../screens/Settings.jsx';
+import Reciept from '../screens/Reciept.jsx';
 
 import settings from '../assets/icons/settings.png';
 import {
@@ -25,7 +26,7 @@ export default function AppStack() {
   return (
     <BillProvider>
       <Stack.Navigator
-        initialRouteName="NewBill"
+        initialRouteName="Reciept"
         screenOptions={({ navigation }) => ({
           headerTitle: '',
           headerTintColor: '#fff',
@@ -51,6 +52,7 @@ export default function AppStack() {
         <Stack.Screen name="NewBill" component={NewBill} />
         <Stack.Screen name="Reports" component={Report} />
         <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Reciept" component={Reciept} />
       </Stack.Navigator>
     </BillProvider>
   );
