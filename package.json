@@ -27,6 +27,7 @@
     "nodemon": "^3.1.11",
     "react": "19.1.0",
     "react-native": "0.81.1",
+    "react-native-bluetooth-classic": "^1.73.0-rc.17",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-image-picker": "^8.2.1",
     "react-native-paper": "5.14.5",
@@ -35,6 +36,7 @@
     "react-native-safe-area-context": "5.6.1",
     "react-native-screens": "4.15.4",
     "react-native-svg": "15.12.1",
+    "react-native-thermal-printer": "^2.3.6",
     "react-native-toast-message": "^2.3.3",
     "react-native-vector-icons": "^10.3.0"
   },

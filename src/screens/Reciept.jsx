@@ -11,59 +11,58 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Svg, { Path } from 'react-native-svg';
-
-const { width } = Dimensions.get('window');
-const HEIGHT = 200;
-// import Printer, {
-//   COMMANDS,
-//   ColumnAlignment,
-// } from '@haroldtran/react-native-thermal-printer';
+import { PermissionsAndroid, Platform } from 'react-native';
+import ThermalPrinterModule from 'react-native-thermal-printer';
+import Toast from 'react-native-toast-message';
+import RNBluetoothClassic from 'react-native-bluetooth-classic';
 
 export default function Reciept() {
-  // const handlePrint = async () => {
-  //   try {
-  //     const Printer = DEVICE_PRINTER[selectedValue];
-  //     const BOLD_ON = COMMANDS.TEXT_FORMAT.TXT_BOLD_ON;
-  //     const BOLD_OFF = COMMANDS.TEXT_FORMAT.TXT_BOLD_OFF;
-  //     const CENTER = COMMANDS.TEXT_FORMAT.TXT_ALIGN_CT;
-  //     let orderList = [
-  //       ['1. Skirt Palas Labuh Muslimah Fashion', 'x2', '500$'],
-  //       ['2. BLOUSE ROPOL VIRAL MUSLIMAH FASHION ', 'x4222', '12.333.500$'],
-  //       [
-  //         '3. Women Crew Neck Button Down Ruffle Collar Loose Blouse',
-  //         'x1',
-  //         '30000000000000$',
-  //       ],
-  //     ];
-  //     let columnAlignment = [
-  //       ColumnAlignment.LEFT,
-  //       ColumnAlignment.CENTER,
-  //       ColumnAlignment.RIGHT,
-  //     ];
-  //     let columnWidth = [48 - (7 + 12), 7, 12];
-  //     const header = ['Product list', 'Qty', 'Price'];
-  //     Printer.printImage('https://i.ibb.co/21dsjpLx/image-23-2.png', {
-  //       imageWidth: 400,
-  //     });
-  //     Printer.printColumnsText(header, columnWidth, columnAlignment, [
-  //       `${BOLD_ON}`,
-  //       '',
-  //       '',
-  //     ]);
-  //     for (let i in orderList) {
-  //       Printer.printColumnsText(orderList[i], columnWidth, columnAlignment, [
-  //         `${BOLD_OFF}`,
-  //         '',
-  //         '',
-  //       ]);
-  //     }
-  //     Printer.printBill(`${CENTER}Thank you\n`);
-  //   } catch (err) {
-  //     console.warn('Print bill error' + err);
-  //   }
-  // };
+  const requestBlutoothPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      ]);
+    } else {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+  };
 
+  const scanDevices = async () => {
+    try {
+      await requestBlutoothPermission();
+      const enabled = await RNBluetoothClassic.isBluetoothEnabled();
+      if (!enabled) {
+        await RNBluetoothClassic.requestBluetoothEnabled();
+      }
+      const devices = await RNBluetoothClassic.getBondedDevices();
+      console.log('PAIRED DEVICES:- ', devices);
+    } catch (error) {
+      console.log('Scan Error', error);
+    }
+  };
+
+  ThermalPrinterModule.defaultConfig = {
+    ...ThermalPrinterModule.defaultConfig,
+    ip: '192.168.100.246',
+    port: 9100,
+    autoCut: false,
+    timeout: 30000, // in milliseconds (version >= 2.2.0)
+  };
+  const handlePrint = async () => {
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload: 'hello world',
+        printerNbrCharactersPerLine: 38,
+      });
+      Toast.show({ type: 'info', text1: 'DONE PRINTING ✅' });
+    } catch (error) {
+      console.log(error.message);
+      Toast.show({ type: 'error', text1: 'ERROR ON PRINTING ❌', error });
+    }
+  };
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -75,11 +74,21 @@ export default function Reciept() {
         >
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             Reciept
-          </Text>{' '}
+          </Text>
           <View className="w-[100%] border-b border-white " />
           <TouchableOpacity
             className=" bg-[#DA7320] p-2 rounded-lg"
-            onPress={() => navigation.navigate('Reciept')}
+            onPress={() => {
+              // navigation.navigate('Reciept');
+            }}
+          >
+            <Text style={styles.buttonText}>📶 CONNECT BT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className=" bg-[#DA7320] p-2 rounded-lg"
+            onPress={() => {
+              scanDevices();
+            }}
           >
             <Text style={styles.buttonText}>🖨️ PRINT</Text>
           </TouchableOpacity>
