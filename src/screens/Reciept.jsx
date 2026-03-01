@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -79,6 +73,8 @@ export default function Reciept() {
           <TouchableOpacity
             className=" bg-[#DA7320] p-2 rounded-lg"
             onPress={() => {
+              scanDevices();
+
               // navigation.navigate('Reciept');
             }}
           >
@@ -86,9 +82,7 @@ export default function Reciept() {
           </TouchableOpacity>
           <TouchableOpacity
             className=" bg-[#DA7320] p-2 rounded-lg"
-            onPress={() => {
-              scanDevices();
-            }}
+            onPress={() => {}}
           >
             <Text style={styles.buttonText}>🖨️ PRINT</Text>
           </TouchableOpacity>
@@ -97,7 +91,7 @@ export default function Reciept() {
     </SafeAreaProvider>
   );
 }
-const styles = StyleSheet.create({
+const styles = {
   button: {
     backgroundColor: '#DA7320',
     padding: 15,
@@ -111,4 +105,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-});
+};

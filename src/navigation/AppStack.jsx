@@ -26,7 +26,7 @@ export default function AppStack() {
   return (
     <BillProvider>
       <Stack.Navigator
-        initialRouteName="Reciept"
+        initialRouteName="Settings"
         screenOptions={({ navigation }) => ({
           headerTitle: '',
           headerTintColor: '#fff',
