@@ -15,8 +15,7 @@ const NavigationBar = () => {
   return (
     <SafeAreaView edges={['bottom']}>
       <View
-        style={{ height: hp('8%'), paddingHorizontal: wp('10%') }}
-        className="bg-Cnavyblue w-screen flex-row  flex  justify-between align-middle items-center"
+        style={{ height: hp('8%'), paddingHorizontal: wp('10%'), backgroundColor: '#171717', width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <TouchableOpacity
           onPress={() => navigation.navigate('HomeScreen')}
@@ -45,10 +44,12 @@ const NavigationBar = () => {
             source={profile}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('NewBill')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('NewBill')}
+          style={{ height: hp('10%') }}
+        >
           <View
-            style={{ height: hp('6%') }}
-            className="bg-Corange  rounded-xl px-[2rem] flex justify-center align-middle items-center"
+            style={{ height: hp('6%'), backgroundColor: '#DA7320', borderRadius: 12, paddingHorizontal: wp('2%'), justifyContent: 'center', alignItems: 'center' }}
           >
             <Image
               resizeMode="contain"
@@ -62,3 +63,4 @@ const NavigationBar = () => {
   );
 };
 export default NavigationBar;
+

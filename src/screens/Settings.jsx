@@ -46,9 +46,9 @@ export default function Settings() {
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       ]);
     } else {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
+      // iOS permissions are handled automatically by react-native-bluetooth-classic
+      // No need to request PermissionsAndroid on iOS
+      console.log('iOS Bluetooth permissions handled by the library');
     }
   };
 
@@ -146,14 +146,13 @@ export default function Settings() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start items-start"
+        style={{ padding: hp('4%'), backgroundColor: '#171717', height: '100%', width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}
       >
         <View style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}>
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             Settings
           </Text>
-          <View className="w-[100%] border-b border-white mb-4" />
+          <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white', marginBottom: 16 }} />
           
           {auth && auth.user && (
             <View style={styles.section}>

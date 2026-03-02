@@ -20,6 +20,8 @@ import search from '../assets/icons/search.png';
 import logo from '../assets/images/logo.png';
 import { TextInput } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const PROFILE_STORAGE_KEY = '@user_profile';
 export default function HomeScreen({ navigation }) {
   const [query, setQuery] = useState('');
   const size = wp('30%');
@@ -34,7 +36,24 @@ export default function HomeScreen({ navigation }) {
     { name: 'Watermelon', price: 20 },
     { name: 'Watermelon', price: 20 },
   ];
+
   const [filteredBills, setFilteredBills] = useState(bills);
+  const [profile, setProfile] = useState('');
+
+  const getProfileDetails = async () => {
+    try {
+      const details = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
+      if (details) {
+        const parsed = JSON.parse(details);
+        setProfile(parsed?.details || parsed);
+      }
+    } catch (error) {
+      console.log('Error. on loading Profile', error);
+    }
+  };
+  useEffect(() => {
+    getProfileDetails();
+  }, []);
 
   const searchItem = text => {
     setQuery(text);
@@ -45,48 +64,88 @@ export default function HomeScreen({ navigation }) {
     setFilteredBills(result);
     console.log('Searching for:', result);
   };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: wp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-center align-middle items-center"
+        style={{
+          padding: wp('4%'),
+          backgroundColor: '#171717',
+          height: '100%',
+          width: '100%',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         {/* //////// */}
         <View
-          style={{ gap: wp('5%') }}
-          className=" flex flex-row justify-center align-middle items-center"
+          style={{
+            gap: wp('5%'),
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           <View
-            className="bg-white rounded-full overflow-hidden"
-            style={{ width: size, height: size, borderRadius: size / 2 }}
+            style={{
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              borderWidth: 2,
+              borderColor: 'white',
+            }}
           >
             <Image
-              source={logo} // any URL image
-              style={{ width: '100%', height: '100%' }}
+              source={{ uri: profile.shopLogo }} // any URL image
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
               resizeMode="cover"
+              backgroundColor="black"
             />
           </View>
           <Text
-            style={{ fontSize: wp('6%') }}
-            className="text-white overflow-hidden break-words  font-semibold"
+            style={{ fontSize: wp('6%'), color: 'white', fontWeight: '600' }}
           >
-            The Fresh Paradise
+            {profile.shopName.toUpperCase()}
           </Text>
         </View>
-        <View className="w-[90%] border-b border-white my-4" />
+        <View
+          style={{
+            width: '90%',
+            borderBottomWidth: 1,
+            borderBottomColor: 'white',
+            marginVertical: 16,
+          }}
+        />
 
         <View
-          style={{ padding: wp('2%'), gap: '5%' }}
-          className="g flex flex-row justify-center align-middle items-center w-full "
+          style={{
+            padding: wp('2%'),
+            gap: '5%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+          }}
         >
           <TouchableOpacity
             onPress={() => navigation.navigate('NewBill')}
             style={{
               padding: wp('4%'),
-              height: hp('auto'),
+              height: 'auto',
               width: wp('40%'),
+              backgroundColor: '#143227',
+              borderRadius: 12,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
             }}
-            className="gap-2 bg-Cgreen rounded-xl flex flex-row justify-center align-middle items-center"
           >
             <Image
               source={plus}
@@ -94,8 +153,7 @@ export default function HomeScreen({ navigation }) {
               style={{ width: wp('8%'), height: hp('5%') }}
             />
             <Text
-              style={{ fontSize: wp('5%') }}
-              className="text-white text-xl font-semibold"
+              style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
               New Bill
             </Text>
@@ -104,10 +162,15 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate('AllBills')}
             style={{
               padding: wp('4%'),
-              height: hp('auto'),
+              height: 'auto',
               width: wp('40%'),
+              backgroundColor: '#143227',
+              borderRadius: 12,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
             }}
-            className="gap-2 bg-Cgreen rounded-xl flex flex-row justify-center align-middle items-center"
           >
             <Image
               source={stack}
@@ -115,25 +178,35 @@ export default function HomeScreen({ navigation }) {
               style={{ width: wp('10%'), height: hp('5%') }}
             />
             <Text
-              style={{ fontSize: wp('5%') }}
-              className="text-white text-xl font-semibold"
+              style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
               View Bills
             </Text>
           </TouchableOpacity>
         </View>
         <View
-          style={{ padding: wp('2%'), gap: '5%' }}
-          className="flex flex-row justify-center align-middle items-center w-full "
+          style={{
+            padding: wp('2%'),
+            gap: '5%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+          }}
         >
           <TouchableOpacity
             onPress={() => navigation.navigate('Products')}
             style={{
               padding: wp('4%'),
-              height: hp('auto'),
+              height: 'auto',
               width: wp('40%'),
+              backgroundColor: '#143227',
+              borderRadius: 12,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
             }}
-            className="gap-2 bg-Cgreen rounded-xl flex flex-row justify-center align-middle items-center"
           >
             <Image
               source={shop}
@@ -141,8 +214,7 @@ export default function HomeScreen({ navigation }) {
               style={{ width: wp('8%'), height: hp('5%') }}
             />
             <Text
-              style={{ fontSize: wp('5%') }}
-              className="text-white text-xl font-semibold"
+              style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
               Products
             </Text>
@@ -151,10 +223,15 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate('Reports')}
             style={{
               padding: wp('4%'),
-              height: hp('auto'),
+              height: 'auto',
               width: wp('40%'),
+              backgroundColor: '#143227',
+              borderRadius: 12,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
             }}
-            className="gap-2 bg-Cgreen rounded-xl flex flex-row justify-center align-middle items-center "
           >
             <Image
               source={graph}
@@ -162,16 +239,35 @@ export default function HomeScreen({ navigation }) {
               style={{ width: wp('5%'), height: hp('5%') }}
             />
             <Text
-              style={{ fontSize: wp('5%') }}
-              className="text-white text-xl font-semibold"
+              style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
               Reports
             </Text>
           </TouchableOpacity>
         </View>
-        <View className="w-[90%] border-b border-white my-4" />
+        <View
+          style={{
+            width: '90%',
+            borderBottomWidth: 1,
+            borderBottomColor: 'white',
+            marginVertical: 16,
+          }}
+        />
         {/* ///////SEARCHBAR////// */}
-        <View className="bg-Clightgray w-full h-[4rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
+        <View
+          style={{
+            backgroundColor: '#2C2C2C',
+            width: '100%',
+            height: 'auto',
+            borderRadius: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            textAlign: 'center',
+            marginVertical: 8,
+            gap: 8,
+            paddingHorizontal: 8,
+          }}
+        >
           <Image
             resizeMode="contain"
             style={{ width: wp('8%'), height: hp('4%') }}
@@ -182,7 +278,7 @@ export default function HomeScreen({ navigation }) {
             value={query}
             placeholderTextColor="gray"
             onChangeText={searchItem}
-            className="text-white text-xl Appfont-semibold  "
+            style={{ color: 'white', fontSize: 20, fontWeight: '600', flex: 1 }}
           />
         </View>
         <ScrollView
@@ -196,13 +292,26 @@ export default function HomeScreen({ navigation }) {
             filteredBills.map((b, index) => (
               <View
                 key={index}
-                style={{ padding: wp('4%'), gap: '5%', height: hp('10%') }}
-                className="bg-Clightgray w-full my-2  rounded-xl flex flex-row justify-between align-middle items-center "
+                style={{
+                  padding: wp('4%'),
+                  gap: '5%',
+                  height: hp('10%'),
+                  backgroundColor: '#2C2C2C',
+                  width: '100%',
+                  marginVertical: 8,
+                  borderRadius: 12,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
               >
-                <View className="flex flex-col gap-2">
+                <View style={{ flexDirection: 'column', gap: 8 }}>
                   <Text
-                    style={{ fontSize: wp('6%') }}
-                    className="text-white font-semibold "
+                    style={{
+                      fontSize: wp('6%'),
+                      color: 'white',
+                      fontWeight: '600',
+                    }}
                   >
                     {b.name}
                   </Text>
@@ -220,8 +329,11 @@ export default function HomeScreen({ navigation }) {
                   ))}
                 </View>
                 <Text
-                  style={{ fontSize: wp('5%') }}
-                  className="text-white font-semibold"
+                  style={{
+                    fontSize: wp('5%'),
+                    color: 'white',
+                    fontWeight: '600',
+                  }}
                 >
                   ₹ {b.price}.00
                 </Text>

@@ -26,92 +26,88 @@ export default function Signup({ navigation }) {
   };
   return (
     <View
-      style={{ gap: wp('1%') }}
-      className="bg-[#171717] flex-1 flex justify-center px-6    "
+      style={{ gap: wp('1%'), backgroundColor: '#171717', flex: 1, justifyContent: 'center', paddingHorizontal: wp('6%') }}
     >
       <Text
-        style={{ fontSize: wp('13%'), marginBottom: 10 }}
-        className="text-white  font-semibold"
+        style={{ fontSize: wp('13%'), marginBottom: 10, color: 'white', fontWeight: '600' }}
       >
         Sign Up
       </Text>
 
       <View
-        style={{ gap: wp('4%') }}
-        className="w-full items-center justify-center "
+        style={{ gap: wp('4%'), width: '100%', alignItems: 'center', justifyContent: 'center' }}
       >
-        <View className=" w-full ">
+        <View style={{ width: '100%' }}>
           <Text
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold"
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600' }}
           >
             Shop Name
           </Text>
           <TextInput
-            style={{ fontSize: wp('5%') }}
-            className="bg-[#1C1C1D] px-[1.5rem] text-white  rounded-xl  h-[5rem]"
+            style={{ fontSize: wp('5%'), backgroundColor: '#1C1C1D', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, height: wp('12%') }}
             value={shopName}
             onChangeText={setShopName}
+            placeholder="Enter shop name"
+            placeholderTextColor="gray"
           />
         </View>
-        <View className=" w-full ">
+        <View style={{ width: '100%' }}>
           <Text
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold"
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600' }}
           >
             Mobile/Email
           </Text>
           <TextInput
-            style={{ fontSize: wp('5%') }}
-            className="bg-[#1C1C1D] px-[1.5rem] text-white  rounded-xl  h-[5rem]"
+            style={{ fontSize: wp('5%'), backgroundColor: '#1C1C1D', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, height: wp('12%') }}
             value={email}
             onChangeText={setEmail}
+            placeholder="Enter email"
+            placeholderTextColor="gray"
           />
         </View>
-        <View className="  w-full">
+        <View style={{ width: '100%' }}>
           <Text
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold"
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600' }}
           >
             Password
           </Text>
           <TextInput
-            style={{ fontSize: wp('5%') }}
-            className="bg-[#1C1C1D] px-[1.5rem] text-white  rounded-xl  h-[5rem] "
+            style={{ fontSize: wp('5%'), backgroundColor: '#1C1C1D', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, height: wp('12%') }}
             value={password}
             onChangeText={setPassword}
+            placeholder="Enter password"
+            placeholderTextColor="gray"
+            secureTextEntry
           />
         </View>
-        <View className="  w-full">
+        <View style={{ width: '100%' }}>
           <Text
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold"
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600' }}
           >
             OTP
           </Text>
-          <View className=" flex flex-row justify-center align-middle items-center gap-[1rem]">
+          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: wp('1%') }}>
             {Array.from({ length: 4 }).map((_, index) => (
               <TextInput
-                style={{ height: hp('7%'), fontSize: wp('5%') }}
+                style={{ height: hp('7%'), fontSize: wp('5%'), backgroundColor: '#1C1C1D', textAlign: 'center', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, width: wp('15%') }}
                 key={index}
                 maxLength={1}
                 keyboardType="number-pad"
-                className="bg-[#1C1C1D] text-center px-[1.5rem] text-white  rounded-xl w-[6rem] h-[5rem]"
+                placeholder="*"
+                placeholderTextColor="gray"
               />
             ))}
           </View>
         </View>
-        <View className="flex flex-row justify-between gap-5">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: wp('5%') }}>
           <Text
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold underline text-center "
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', textDecorationLine: 'underline', textAlign: 'center' }}
           >
             Send OTP
           </Text>
           <Text
             onPress={() => navigation.navigate('Login')}
-            style={{ fontSize: wp('5%') }}
-            className="text-[#9C9E9C]  font-semibold underline text-center "
+            style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', textDecorationLine: 'underline', textAlign: 'center' }}
           >
             Login
           </Text>
@@ -119,12 +115,10 @@ export default function Signup({ navigation }) {
 
         <TouchableOpacity
           onPress={() => registerUser()}
-          style={{ padding: wp('3%') }}
-          className="bg-[#DA7320] w-full flex justify-center items-center align-middle text-center rounded-xl"
+          style={{ padding: wp('3%'), backgroundColor: '#DA7320', width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: 12 }}
         >
           <Text
-            style={{ fontSize: wp('8%') }}
-            className=" font-semibold text-white text-center"
+            style={{ fontSize: wp('8%'), fontWeight: '600', color: 'white', textAlign: 'center' }}
           >
             Sign Up
           </Text>
@@ -133,3 +127,4 @@ export default function Signup({ navigation }) {
     </View>
   );
 }
+

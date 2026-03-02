@@ -21,7 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import pencil from '../assets/icons/pencil.png';
 import logo from '../assets/images/logo.png';
 import Toast from 'react-native-toast-message';
-import DocumentPicker from '@react-native-documents/picker';
+import { pick, isCancel, types } from '@react-native-documents/picker';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 
@@ -29,7 +29,9 @@ export default function Profile() {
   const [shopName, setShopName] = useState('The Fresh Paradise');
   const [email, setEmail] = useState('alameenkhan1431@gmail.com');
   const [phone, setPhone] = useState('+1 234 567 890');
-  const [address, setAddress] = useState('123 Main St, Bangalore, Karnataka, India');
+  const [address, setAddress] = useState(
+    '123 Main St, Bangalore, Karnataka, India',
+  );
   const [gstNumber, setGstNumber] = useState('29ABCD**E1234**Z5');
   const [taxRate, setTaxRate] = useState('0');
   const [shopLogo, setShopLogo] = useState(null);
@@ -70,8 +72,14 @@ export default function Profile() {
         taxRate,
         shopLogo,
       };
-      await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profileData));
-      Toast.show({ type: 'success', text1: 'Profile Updated Successfully! ✅' });
+      await AsyncStorage.setItem(
+        PROFILE_STORAGE_KEY,
+        JSON.stringify(profileData),
+      );
+      Toast.show({
+        type: 'success',
+        text1: 'Profile Updated Successfully! ✅',
+      });
     } catch (error) {
       console.log('Error saving profile:', error);
       Toast.show({ type: 'error', text1: 'Failed to save profile ❌' });
@@ -87,8 +95,8 @@ export default function Profile() {
         ]);
       }
 
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
+      const result = await pick({
+        type: [types.images],
         copyTo: 'cachesDirectory',
       });
 
@@ -96,10 +104,13 @@ export default function Profile() {
         const file = result[0];
         const logoUri = Platform.OS === 'ios' ? file.fileCopyUri : file.uri;
         setShopLogo(logoUri);
-        Toast.show({ type: 'success', text1: 'Logo uploaded successfully! ✅' });
+        Toast.show({
+          type: 'success',
+          text1: 'Logo uploaded successfully! ✅',
+        });
       }
     } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
+      if (isCancel(err)) {
         console.log('User cancelled document picker');
       } else {
         console.log('Error picking document:', err);
@@ -115,11 +126,17 @@ export default function Profile() {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Save', onPress: saveProfileData },
-      ]
+      ],
     );
   };
 
-  const renderField = (label, value, setter, placeholder, keyboardType = 'default') => (
+  const renderField = (
+    label,
+    value,
+    setter,
+    placeholder,
+    keyboardType = 'default',
+  ) => (
     <View style={styles.fieldContainer}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
@@ -136,22 +153,37 @@ export default function Profile() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start items-start"
+        style={{
+          padding: hp('4%'),
+          backgroundColor: '#171717',
+          height: '100%',
+          width: '100%',
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        }}
       >
-        <View style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}>
+        <View
+          style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
+        >
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             Profile
           </Text>
-          <View className="w-[100%] border-b border-white " />
+          <View
+            style={{
+              width: '100%',
+              borderBottomWidth: 1,
+              borderBottomColor: 'white',
+            }}
+          />
         </View>
 
-        <ScrollView 
+        <ScrollView
           style={{ width: '100%', flex: 1 }}
           showsVerticalScrollIndicator={false}
         >
           <View style={{ alignItems: 'center', width: '100%', marginTop: 10 }}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.logoContainer}
               onPress={handleLogoUpload}
             >
@@ -168,16 +200,46 @@ export default function Profile() {
             <Text style={styles.shopNameText}>{shopName || 'Shop Name'}</Text>
           </View>
 
-          <View className="w-[100%] border-b border-white my-4" />
+          <View
+            style={{
+              width: '100%',
+              borderBottomWidth: 1,
+              borderBottomColor: 'white',
+              marginVertical: 16,
+            }}
+          />
 
           <View style={styles.formContainer}>
             {renderField('Shop Name', shopName, setShopName, 'Enter shop name')}
-            {renderField('Email', email, setEmail, 'Enter email', 'email-address')}
-            {renderField('Phone', phone, setPhone, 'Enter phone number', 'phone-pad')}
+            {renderField(
+              'Email',
+              email,
+              setEmail,
+              'Enter email',
+              'email-address',
+            )}
+            {renderField(
+              'Phone',
+              phone,
+              setPhone,
+              'Enter phone number',
+              'phone-pad',
+            )}
             {renderField('Address', address, setAddress, 'Enter address')}
-            {renderField('GST Number (Optional)', gstNumber, setGstNumber, 'Enter GST number')}
-            {renderField('Tax Rate (%)', taxRate, setTaxRate, 'Enter tax rate', 'numeric')}
-            
+            {renderField(
+              'GST Number (Optional)',
+              gstNumber,
+              setGstNumber,
+              'Enter GST number',
+            )}
+            {renderField(
+              'Tax Rate (%)',
+              taxRate,
+              setTaxRate,
+              'Enter tax rate',
+              'numeric',
+            )}
+
             {parseFloat(taxRate) > 0 && (
               <View style={styles.taxPreview}>
                 <Text style={styles.taxPreviewText}>
@@ -188,9 +250,7 @@ export default function Profile() {
 
             {gstNumber && (
               <View style={styles.gstPreview}>
-                <Text style={styles.gstPreviewText}>
-                  GST: {gstNumber}
-                </Text>
+                <Text style={styles.gstPreviewText}>GST: {gstNumber}</Text>
               </View>
             )}
 
@@ -204,12 +264,22 @@ export default function Profile() {
             <View style={styles.previewCard}>
               <Text style={styles.previewTitle}>RECEIPT PREVIEW</Text>
               <View style={styles.previewDivider} />
-              <Text style={styles.previewShopName}>{shopName || 'Your Shop Name'}</Text>
-              <Text style={styles.previewAddress}>{address || 'Your Address'}</Text>
-              {gstNumber ? <Text style={styles.previewGst}>GST: {gstNumber}</Text> : null}
-              {parseFloat(taxRate) > 0 ? <Text style={styles.previewTax}>Tax Rate: {taxRate}%</Text> : null}
+              <Text style={styles.previewShopName}>
+                {shopName || 'Your Shop Name'}
+              </Text>
+              <Text style={styles.previewAddress}>
+                {address || 'Your Address'}
+              </Text>
+              {gstNumber ? (
+                <Text style={styles.previewGst}>GST: {gstNumber}</Text>
+              ) : null}
+              {parseFloat(taxRate) > 0 ? (
+                <Text style={styles.previewTax}>Tax Rate: {taxRate}%</Text>
+              ) : null}
               <View style={styles.previewDivider} />
-              <Text style={styles.previewThankYou}>Thank you for shopping!</Text>
+              <Text style={styles.previewThankYou}>
+                Thank you for shopping!
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -223,6 +293,8 @@ const styles = StyleSheet.create({
     width: wp('28%'),
     height: hp('12.5%'),
     borderRadius: 100,
+    borderColor: 'white',
+    borderWidth: 5,
     backgroundColor: 'gray',
     justifyContent: 'center',
     alignItems: 'center',

@@ -97,8 +97,7 @@ export default function Products() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start  items-start"
+        style={{ padding: hp('4%'), backgroundColor: '#171717', height: '100%', width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}
       >
         <View
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -136,8 +135,7 @@ export default function Products() {
                     }}
                   >
                     <Text
-                      style={{ fontSize: wp('5%') }}
-                      className=" text-white text-xl font-semibold"
+                      style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
                     >
                       {item.category.toUpperCase()}
                     </Text>
@@ -155,7 +153,7 @@ export default function Products() {
             />
           </View>
           {/* ///////SEARCHBAR////// */}
-          <View className="bg-Clightgray w-full h-[4rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
+          <View style={{ backgroundColor: '#2C2C2C', width: '100%', height: 'auto', borderRadius: 8, flexDirection: 'row', alignItems: 'center', textAlign: 'center', marginVertical: 8, gap: 8, paddingHorizontal: 8 }}>
             <Image
               resizeMode="contain"
               style={{ width: wp('8%'), height: hp('4%') }}
@@ -166,11 +164,11 @@ export default function Products() {
               value={search}
               placeholderTextColor="gray"
               onChangeText={searchData}
-              className="text-white text-xl Appfont-semibold  "
+              style={{ color: 'white', fontSize: 20, fontWeight: '600', flex: 1 }}
             />
           </View>
           {loading && (
-            <View className=" m-auto justify-center items-center bg-black/20">
+            <View style={{ margin: 'auto', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
               <ActivityIndicator size="large" color="#fff" />
             </View>
           )}
@@ -197,7 +195,7 @@ export default function Products() {
                 }}
               >
                 {/* <Text style={styles.image}>{item.emoji}</Text> */}
-                <View className="px-2 w-full flex-row justify-between items-center">
+                <View style={{ paddingHorizontal: 8, width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text
                     style={{
                       fontSize: wp('5%'),
@@ -356,3 +354,4 @@ const styles = {
     fontWeight: 'bold',
   },
 };
+

@@ -53,8 +53,7 @@ export default function AllBills({ navigation }) {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start  items-start"
+        style={{ padding: hp('4%'), backgroundColor: '#171717', height: '100%', width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}
       >
         <View
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -62,10 +61,10 @@ export default function AllBills({ navigation }) {
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             All Bills
           </Text>
-          <View className="w-[100%] border-b border-white " />
+          <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white' }} />
         </View>
         {/* ///////SEARCHBAR////// */}
-        <View className="bg-Clightgray w-full h-[rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
+        <View style={{ backgroundColor: '#2C2C2C', width: '100%', height: 'auto', borderRadius: 8, flexDirection: 'row', alignItems: 'center', textAlign: 'center', marginVertical: 8, gap: 8, paddingHorizontal: 8 }}>
           <Image
             resizeMode="contain"
             style={{ width: wp('8%'), height: hp('4%') }}
@@ -76,7 +75,7 @@ export default function AllBills({ navigation }) {
             value={search}
             placeholderTextColor="gray"
             onChangeText={searchData}
-            className="text-white text-xl Appfont-semibold  "
+            style={{ color: 'white', fontSize: 20, fontWeight: '600', flex: 1 }}
           />
         </View>
 
@@ -86,13 +85,11 @@ export default function AllBills({ navigation }) {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View
-              style={{ padding: wp('4%'), gap: '5%', height: hp('10%') }}
-              className="bg-Clightgray w-full my-2  rounded-xl flex flex-row justify-between align-middle items-center "
+              style={{ padding: wp('4%'), gap: '5%', height: hp('10%'), backgroundColor: '#2C2C2C', width: '100%', marginVertical: 8, borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <View className="flex flex-col gap-2">
+              <View style={{ flexDirection: 'column', gap: 8 }}>
                 <Text
-                  style={{ fontSize: wp('6%') }}
-                  className="text-white font-semibold "
+                  style={{ fontSize: wp('6%'), color: 'white', fontWeight: '600' }}
                 >
                   {item.name}
                 </Text>
@@ -110,8 +107,7 @@ export default function AllBills({ navigation }) {
                 ))}
               </View>
               <Text
-                style={{ fontSize: wp('5%') }}
-                className="text-white font-semibold"
+                style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
               >
                 ₹ {item.price}.00
               </Text>
@@ -168,3 +164,4 @@ const styles = {
     borderRadius: 20,
   },
 };
+

@@ -34,8 +34,7 @@ export default function NewBill({ route }) {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start  items-start"
+        style={{ padding: hp('4%'), backgroundColor: '#171717', height: '100%', width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}
       >
         <View
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -43,10 +42,10 @@ export default function NewBill({ route }) {
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             New Bill
           </Text>
-          <View className="w-[100%] border-b border-white " />
+          <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white' }} />
         </View>
         {/* ///////SEARCHBAR//////
-        <View className="bg-Clightgray w-full h-[rem] rounded-lg  flex flex-row   items-center text-center my-2 gap-2 px-2">
+        <View style={{ backgroundColor: '#2C2C2C', width: '100%', height: 'auto', borderRadius: 8, flexDirection: 'row', alignItems: 'center', textAlign: 'center', marginVertical: 8, gap: 8, paddingHorizontal: 8 }}>
           <Image
             resizeMode="contain"
             style={{ width: wp('8%'), height: hp('4%') }}
@@ -57,7 +56,7 @@ export default function NewBill({ route }) {
             value={search}
             placeholderTextColor="gray"
             onChangeText={searchData}
-            className="text-white text-xl Appfont-semibold  "
+            style={{ color: 'white', fontSize: 20, fontWeight: '600' }}
           />
         </View> */}
         {/* PRODUCTS */}
@@ -76,7 +75,7 @@ export default function NewBill({ route }) {
                   ₹ {item.price}.00
                 </Text>
               </View>
-              <View className="flex-row text-center justify-center align-middle items-center ">
+              <View style={{ flexDirection: 'row', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
                 <TouchableOpacity onPress={() => decreaseQty(item._id)}>
                   <Image
                     source={orangeMinus}
@@ -84,7 +83,7 @@ export default function NewBill({ route }) {
                     style={styles.quantityButtons}
                   />
                 </TouchableOpacity>
-                <Text className="text-white flex items mx-3 text-[20px]">
+                <Text style={{ color: 'white', marginHorizontal: 12, fontSize: 20 }}>
                   {item.quantity}
                 </Text>
                 <TouchableOpacity onPress={() => increaseQty(item._id)}>
@@ -94,9 +93,9 @@ export default function NewBill({ route }) {
             </View>
           )}
         />
-        <View className="w-full flex-row justify-between items-center align-middle">
-          <Text className="text-white text-3xl font-bold">Total : </Text>
-          <Text className="text-white text-3xl"> {total}/-</Text>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>Total : </Text>
+          <Text style={{ color: 'white', fontSize: 28 }}> {total}/-</Text>
         </View>
         {/* ADD NEW PRODUCT TO BILL BUTTON */}
         <TouchableOpacity
@@ -106,7 +105,7 @@ export default function NewBill({ route }) {
           <Text style={styles.buttonText}>+ Add Product</Text>
         </TouchableOpacity>
 
-        <View className="w-full flex flex-row justify-between  items-center">
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <TouchableOpacity onPress={clearBill}>
             <Image
               source={trash}
@@ -115,11 +114,11 @@ export default function NewBill({ route }) {
             />
           </TouchableOpacity>
           
-          <TouchableOpacity className=" bg-[#DA7320] p-2  rounded-lg">
+          <TouchableOpacity style={{ backgroundColor: '#DA7320', padding: 8, borderRadius: 8 }}>
             <Text style={styles.buttonText}>💾 SAVE</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className=" bg-[#DA7320] p-2 rounded-lg"
+            style={{ backgroundColor: '#DA7320', padding: 8, borderRadius: 8 }}
             onPress={() => navigation.navigate('Reciept')}
           >
             <Text style={styles.buttonText}>🖨️ PRINT</Text>
@@ -155,18 +154,21 @@ const styles = {
   },
   buttonText: {
     color: 'white',
-    fontSize: 28,
+    fontSize: 20,
     textAlign: 'center',
     fontWeight: '600',
   },
   quantityButtons: {
     color: 'white',
+    width: 30,
+    height: 30,
   },
   trashCan: {
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 3,
-    height: '50',
-    width: '40',
+    height: 50,
+    width: 40,
   },
 };
+

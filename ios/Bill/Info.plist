@@ -2,10 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<key>NSCameraUsageDescription</key>
-<string>We need camera access to Camera </string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>We need gallery access to upload images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to take photos for products</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need gallery access to upload images for shop logo</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save photos to your library</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We need Bluetooth access to connect to printers</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We need Bluetooth access to connect to printers</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need location access to scan for Bluetooth printers</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

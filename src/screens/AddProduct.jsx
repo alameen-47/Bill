@@ -57,6 +57,7 @@ export default function Products() {
       });
     }
   };
+  
   // GET ALL CATEGORY
   const getAllCategory = async () => {
     try {
@@ -112,8 +113,7 @@ export default function Products() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ padding: hp('4%') }}
-        className="bg-Cdarkgray  w-screen flex-1 flex justify-start  items-start"
+        style={{ padding: hp('4%'), backgroundColor: '#171717', width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}
       >
         <View
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -121,7 +121,7 @@ export default function Products() {
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
             Add Product
           </Text>
-          <View className="w-[100%] border-b border-white " />
+          <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white' }} />
           <View style={styles.Container}>
             <View style={styles.ContentContainer}>
               <View
@@ -150,13 +150,13 @@ export default function Products() {
                     }}
                   >
                     <Image
-                      style={{ width: '45' }}
+                      style={{ width: 45 }}
                       resizeMode="contain"
                       source={greenPlus}
                     />
                   </TouchableOpacity>
                 </View>
-                <View className="w-[100%] border-b border-white " />
+                <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white' }} />
                 <Text style={styles.text}>Select Category</Text>
                 <View>
                   <DropDownPicker
@@ -259,3 +259,4 @@ const styles = {
     margin: wp('1%'),
   },
 };
+
