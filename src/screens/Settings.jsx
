@@ -1,0 +1,267 @@
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  PermissionsAndroid,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../context/authContext';
+import { PrinterContext } from '../context/printerContext';
+import RNBluetoothClassic from 'react-native-bluetooth-classic';
+import Toast from 'react-native-toast-message';
+
+export default function Settings() {
+  const [auth, setAuth] = useAuth();
+  const { connectedPrinter, connectPrinter, disconnectPrinter } = useContext(PrinterContext);
+  const [pairedDevices, setPairedDevices] = useState([]);
+  const [printers, setPrinters] = useState([]);
+  const [isScanning, setIsScanning] = useState(false);
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('auth');
+      setAuth(null);
+      await AsyncStorage.clear();
+      console.log('Async Stored Data Removed Successfully');
+    } catch (error) {
+      console.log(error.message || 'Error in logout function');
+    }
+  };
+
+  const requestBluetoothPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      ]);
+    } else {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+  };
+
+  const scanDevices = async () => {
+    try {
+      setIsScanning(true);
+      await requestBluetoothPermission();
+      const enabled = await RNBluetoothClassic.isBluetoothEnabled();
+      if (!enabled) {
+        await RNBluetoothClassic.requestBluetoothEnabled();
+      }
+      const devices = await RNBluetoothClassic.getBondedDevices();
+      if (devices) {
+        setPairedDevices(devices);
+        // Filter for printers (class 1536 is for printers)
+        const printerList = devices.filter(
+          device => device?.deviceClass?.majorClass === 1536,
+        );
+        setPrinters(printerList);
+        Toast.show({ type: 'info', text1: `Found ${printerList.length} printer(s)` });
+      }
+    } catch (error) {
+      console.log('Scan Error - ', error);
+      Toast.show({ type: 'error', text1: 'Scan Failed' });
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const handleConnectPrinter = async (device) => {
+    try {
+      Toast.show({ type: 'info', text1: 'Connecting...' });
+      const isConnected = await device.isConnected();
+      if (!isConnected) {
+        await device.connect();
+      }
+      connectPrinter(device);
+      Toast.show({ type: 'success', text1: `Connected to ${device.name}` });
+    } catch (error) {
+      console.log('Connection Error - ', error);
+      Toast.show({ type: 'error', text1: 'Connection Failed' });
+    }
+  };
+
+  const handleDisconnect = () => {
+    disconnectPrinter();
+    Toast.show({ type: 'info', text1: 'Printer Disconnected' });
+  };
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView
+        style={{ padding: hp('4%') }}
+        className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start items-start"
+      >
+        <View
+          style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
+        >
+          <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
+            Settings
+          </Text>
+          <View className="w-[100%] border-b border-white " />
+          
+          {/* Connected Printer Status */}
+          {connectedPrinter && (
+            <View style={styles.connectedPrinterBox}>
+              <Text style={styles.connectedTitle}>Connected Printer:</Text>
+              <Text style={styles.connectedName}>🖨️ {connectedPrinter.name}</Text>
+              <TouchableOpacity
+                style={styles.disconnectButton}
+                onPress={handleDisconnect}
+              >
+                <Text style={styles.disconnectText}>Disconnect</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          
+          {/* Logout Button */}
+          <TouchableOpacity
+            onPress={logout}
+            className="bg-[#DA7320] p-2 rounded-lg flex-row justify-center items-center w-full my-2"
+          >
+            <Text style={styles.buttonText}>📤 LOGOUT</Text>
+          </TouchableOpacity>
+          
+          {/* Scan for Printers Button */}
+          <TouchableOpacity
+            className="bg-[#DA7320] p-2 rounded-lg w-full my-2"
+            onPress={scanDevices}
+            disabled={isScanning}
+          >
+            <Text style={styles.buttonText}>
+              {isScanning ? '⏳ SCANNING...' : '📶 SCAN FOR PRINTERS'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Available Printers List */}
+          <Text style={styles.sectionTitle}>Available Printers:</Text>
+          <FlatList
+            data={printers}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={[
+                  styles.printerItem,
+                  connectedPrinter?.id === item.id && styles.printerItemActive
+                ]}
+                onPress={() => handleConnectPrinter(item)}
+              >
+                <View>
+                  <Text style={styles.printerName}>🖨️ {item.name}</Text>
+                  <Text style={styles.printerAddress}>{item.address}</Text>
+                </View>
+                {connectedPrinter?.id === item.id && (
+                  <Text style={styles.connectedBadge}>✓ Connected</Text>
+                )}
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                {isScanning ? 'Scanning...' : 'No printers found. Tap Scan to search.'}
+              </Text>
+            }
+            style={styles.printerList}
+          />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  sectionTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  connectedPrinterBox: {
+    backgroundColor: '#1a5a1a',
+    padding: 15,
+    borderRadius: 10,
+    width: '100%',
+    marginVertical: 10,
+    borderWidth: 2,
+    borderColor: '#2ecc71',
+  },
+  connectedTitle: {
+    color: '#2ecc71',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  connectedName: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
+  disconnectButton: {
+    backgroundColor: '#e74c3c',
+    padding: 8,
+    borderRadius: 5,
+    marginTop: 10,
+    alignSelf: 'flex-start',
+  },
+  disconnectText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  printerItem: {
+    backgroundColor: '#2C2C2C',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  printerItemActive: {
+    borderWidth: 2,
+    borderColor: '#2ecc71',
+  },
+  printerName: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  printerAddress: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 3,
+  },
+  connectedBadge: {
+    color: '#2ecc71',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  printerList: {
+    width: '100%',
+    marginTop: 10,
+  },
+  emptyText: {
+    color: '#888',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+});
+

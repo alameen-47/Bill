@@ -46,9 +46,8 @@ const NavigationBar = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Bill')}
+          onPress={() => navigation.navigate('NewBill')}
           style={{ height: hp('10%') }}
-          className=" cursor-pointer flex justify-center align-Middle items-center"
         >
           <View
             style={{ height: hp('6%') }}

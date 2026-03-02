@@ -114,7 +114,7 @@ export default function NewBill({ route }) {
               resizeMode="contain"
             />
           </TouchableOpacity>
-          💾
+          
           <TouchableOpacity className=" bg-[#DA7320] p-2  rounded-lg">
             <Text style={styles.buttonText}>💾 SAVE</Text>
           </TouchableOpacity>
