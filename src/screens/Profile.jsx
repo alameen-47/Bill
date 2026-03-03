@@ -22,7 +22,7 @@ import pencil from '../assets/icons/pencil.png';
 import logo from '../assets/images/logo.png';
 import Toast from 'react-native-toast-message';
 import { pick, isCancel, types } from '@react-native-documents/picker';
-
+import RNFS from 'react-native-fs';
 const PROFILE_STORAGE_KEY = '@user_profile';
 
 export default function Profile() {
@@ -97,13 +97,17 @@ export default function Profile() {
 
       const result = await pick({
         type: [types.images],
-        copyTo: 'cachesDirectory',
       });
 
       if (result && result[0]) {
         const file = result[0];
         const logoUri = Platform.OS === 'ios' ? file.fileCopyUri : file.uri;
-        setShopLogo(logoUri);
+
+        // Read the image as base64 and store directly in AsyncStorage
+        const base64Data = await RNFS.readFile(logoUri, 'base64');
+        const base64Uri = `data:image/png;base64,${base64Data}`;
+
+        setShopLogo(base64Uri);
         Toast.show({
           type: 'success',
           text1: 'Logo uploaded successfully! ✅',
@@ -305,6 +309,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 100,
     resizeMode: 'cover',
+    backgroundColor: 'black',
   },
   editBadge: {
     position: 'absolute',

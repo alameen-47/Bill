@@ -103,9 +103,36 @@ export default function Reciept() {
     setShowDiscountModal(false);
   };
 
+  // ESC/POS commands for thermal printer
+  const ESC = '\x1B';
+  const GS = '\x1D';
+  const LF = '\x0A';
+  
+  // Print logo using the thermal printer's image printing capability
+  const printLogo = async (logoBase64) => {
+    if (!logoBase64 || !connectedPrinter) return;
+    
+    try {
+      // Initialize printer
+      await connectedPrinter.printImage(logoBase64);
+    } catch (error) {
+      console.log('Logo print error:', error);
+      // Fallback: print shop name
+      try {
+        await connectedPrinter.write(ESC + '@');
+        await connectedPrinter.write(ESC + 'a' + '\x01');
+        await connectedPrinter.write(ESC + '!' + '\x30');
+        await connectedPrinter.write(shopName.toUpperCase() + LF);
+        await connectedPrinter.write(ESC + '!' + '\x00');
+      } catch (fallbackError) {
+        console.log('Fallback logo print error:', fallbackError);
+      }
+    }
+  };
+
   const generateReceiptText = () => {
     let receipt = '';
-    receipt += `       ${shopName.toUpperCase()}\n`;
+    
     receipt += `  ${shopAddress}\n`;
     receipt += `  Phone: ${shopPhone}\n`;
     if (gstNumber) {
@@ -164,6 +191,12 @@ export default function Reciept() {
         await connectedPrinter.connect();
       }
 
+      // Print logo first if available
+      if (shopLogo) {
+        await printLogo(shopLogo);
+      }
+
+      // Print receipt
       const receiptText = generateReceiptText();
       await connectedPrinter.write(receiptText);
 

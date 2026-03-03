@@ -111,7 +111,7 @@ export default function HomeScreen({ navigation }) {
           <Text
             style={{ fontSize: wp('6%'), color: 'white', fontWeight: '600' }}
           >
-            {profile.shopName.toUpperCase()}
+            {profile.shopName?.toUpperCase()}
           </Text>
         </View>
         <View
