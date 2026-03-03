@@ -107,11 +107,11 @@ export default function Reciept() {
   const ESC = '\x1B';
   const GS = '\x1D';
   const LF = '\x0A';
-  
+
   // Print logo using the thermal printer's image printing capability
-  const printLogo = async (logoBase64) => {
+  const printLogo = async logoBase64 => {
     if (!logoBase64 || !connectedPrinter) return;
-    
+
     try {
       // Initialize printer
       await connectedPrinter.printImage(logoBase64);
@@ -132,7 +132,6 @@ export default function Reciept() {
 
   const generateReceiptText = () => {
     let receipt = '';
-    
     receipt += `  ${shopAddress}\n`;
     receipt += `  Phone: ${shopPhone}\n`;
     if (gstNumber) {
@@ -155,20 +154,21 @@ export default function Reciept() {
     });
 
     receipt += '------------------------\n';
-    receipt += `SubTotal:     ₹ ${total.toFixed(2)}\n`;
+    receipt += `SubTotal:- ${total.toFixed(2)}\n`;
     if (parseFloat(taxRate) > 0) {
-      receipt += `Tax (${taxRate}%): ₹ ${taxAmount.toFixed(2)}\n`;
+      receipt += `Tax (${taxRate}%):-  ${taxAmount.toFixed(2)}\n`;
     }
     if (parseFloat(discountPercent) > 0) {
-      receipt += `Discount (${discountPercent}%): - ₹ ${discountAmount.toFixed(2)}\n`;
+      receipt += `Discount (${discountPercent}%):- ${discountAmount.toFixed(2)}\n`;
     }
     receipt += '------------------------\n';
-    receipt += `GRAND TOTAL: ₹ ${grandTotal.toFixed(2)}\n`;
+    receipt += `GRAND TOTAL: ${grandTotal.toFixed(2)}\n`;
     receipt += '========================\n';
     receipt += `Payment: ${paymentMethod}\n`;
     receipt += '\n';
     receipt += '   Thank you for shopping!\n';
     receipt += '   Please visit again!\n';
+    receipt += '  \n\n\n';
 
     return receipt;
   };

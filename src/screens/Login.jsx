@@ -29,19 +29,46 @@ export default function Login() {
   };
   return (
     <View
-      style={{ gap: wp('13%'), backgroundColor: '#171717', flex: 1, justifyContent: 'center', paddingHorizontal: wp('6%') }}
+      style={{
+        gap: wp('13%'),
+        backgroundColor: '#171717',
+        flex: 1,
+        justifyContent: 'center',
+        paddingHorizontal: wp('6%'),
+      }}
     >
       <Text style={{ fontSize: wp('13%'), color: 'white', fontWeight: '600' }}>
         Login
       </Text>
 
-      <View style={{ gap: wp('8%'), width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          gap: wp('8%'),
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <View style={{ width: '100%' }}>
-          <Text style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', marginBottom: 8 }}>
+          <Text
+            style={{
+              fontSize: wp('5%'),
+              color: '#9C9E9C',
+              fontWeight: '600',
+              marginBottom: 8,
+            }}
+          >
             Mobile/Email
           </Text>
           <TextInput
-            style={{ fontSize: wp('5%'), backgroundColor: '#1C1C1D', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, height: wp('12%') }}
+            style={{
+              fontSize: wp('5%'),
+              backgroundColor: '#1C1C1D',
+              paddingHorizontal: wp('1.5%'),
+              color: 'white',
+              borderRadius: 12,
+              height: wp('12%'),
+            }}
             value={email}
             onChangeText={setEmail}
             placeholder="Enter email"
@@ -49,33 +76,74 @@ export default function Login() {
           />
         </View>
         <View style={{ width: '100%' }}>
-          <Text style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', marginBottom: 8 }}>
+          <Text
+            style={{
+              fontSize: wp('5%'),
+              color: '#9C9E9C',
+              fontWeight: '600',
+              marginBottom: 8,
+            }}
+          >
             Password
           </Text>
           <TextInput
-            style={{ fontSize: wp('5%'), backgroundColor: '#1C1C1D', paddingHorizontal: wp('1.5%'), color: 'white', borderRadius: 12, height: wp('12%') }}
+            style={{
+              fontSize: wp('5%'),
+              backgroundColor: '#1C1C1D',
+              paddingHorizontal: wp('1.5%'),
+              color: 'white',
+              borderRadius: 12,
+              height: wp('12%'),
+            }}
             value={password}
             onChangeText={setPassword}
             placeholder="Enter password"
             placeholderTextColor="gray"
-            secureTextEntry
           />
         </View>
 
-        <Text style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', textDecorationLine: 'underline', textAlign: 'center' }}>
+        <Text
+          style={{
+            fontSize: wp('5%'),
+            color: '#9C9E9C',
+            fontWeight: '600',
+            textDecorationLine: 'underline',
+            textAlign: 'center',
+          }}
+        >
           Forgot Password?
         </Text>
         <Text
           onPress={() => navigation.navigate('SignUp')}
-          style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600', textDecorationLine: 'underline', textAlign: 'center' }}
+          style={{
+            fontSize: wp('5%'),
+            color: '#9C9E9C',
+            fontWeight: '600',
+            textDecorationLine: 'underline',
+            textAlign: 'center',
+          }}
         >
           Sign Up
         </Text>
         <TouchableOpacity
           onPress={() => login()}
-          style={{ padding: wp('3%'), backgroundColor: '#DA7320', width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: 12 }}
+          style={{
+            padding: wp('3%'),
+            backgroundColor: '#DA7320',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 12,
+          }}
         >
-          <Text style={{ fontSize: wp('8%'), fontWeight: '600', color: 'white', textAlign: 'center' }}>
+          <Text
+            style={{
+              fontSize: wp('8%'),
+              fontWeight: '600',
+              color: 'white',
+              textAlign: 'center',
+            }}
+          >
             Login
           </Text>
         </TouchableOpacity>
