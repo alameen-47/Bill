@@ -6,21 +6,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './context/authContext.js';
 import { PrinterProvider } from './context/printerContext.js';
 import { BillProvider } from './context/billContext.js';
+import { LanguageProvider } from './context/languageContext.js';
 import NavigationBar from './components/NavigationBar';
 import Toast from 'react-native-toast-message';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <PrinterProvider>
-        <BillProvider>
-          <NavigationContainer>
-            <AppNavigator />
-            <NavigationBar />
-            <Toast />
-          </NavigationContainer>
-        </BillProvider>
-      </PrinterProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <PrinterProvider>
+          <BillProvider>
+            <NavigationContainer>
+              <AppNavigator />
+              <NavigationBar />
+              <Toast />
+            </NavigationContainer>
+          </BillProvider>
+        </PrinterProvider>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -21,23 +21,17 @@ import logo from '../assets/images/logo.png';
 import { TextInput } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { BillContext } from '../context/billContext';
+import { useLanguage } from '../context/languageContext';
+
 const PROFILE_STORAGE_KEY = '@user_profile';
 export default function HomeScreen({ navigation }) {
   const [query, setQuery] = useState('');
   const size = wp('30%');
-  const bills = [
-    { name: 'Apple', price: 50 },
-    { name: 'Banana', price: 20 },
-    { name: 'Orange', price: 30 },
-    { name: 'Grapes', price: 40 },
-    { name: 'Pineapple', price: 70 },
-    { name: 'Watermelon', price: 20 },
-    { name: 'Watermelon', price: 20 },
-    { name: 'Watermelon', price: 20 },
-    { name: 'Watermelon', price: 20 },
-  ];
-
-  const [filteredBills, setFilteredBills] = useState(bills);
+  const { getLast5Bills, loadSavedBills } = useContext(BillContext);
+  const { t } = useLanguage();
+  const [last5Bills, setLast5Bills] = useState([]);
   const [profile, setProfile] = useState('');
 
   const getProfileDetails = async () => {
@@ -53,15 +47,30 @@ export default function HomeScreen({ navigation }) {
   };
   useEffect(() => {
     getProfileDetails();
+    loadBills();
   }, []);
+
+  // Use useFocusEffect to refresh bills when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadBills();
+    }, [])
+  );
+
+  const loadBills = () => {
+    const bills = getLast5Bills();
+    setLast5Bills(bills);
+  };
 
   const searchItem = text => {
     setQuery(text);
-    // Implement search functionality here
-    const result = bills.filter(bill =>
-      bill.name.toLowerCase().includes(text.toLowerCase()),
+    const bills = getLast5Bills();
+    // Filter bills by bill number or item names
+    const result = bills.filter(bill => 
+      bill.billNumber?.toLowerCase().includes(text.toLowerCase()) ||
+      bill.items?.some(item => item.name?.toLowerCase().includes(text.toLowerCase()))
     );
-    setFilteredBills(result);
+    setLast5Bills(result.length > 0 || text === '' ? (text === '' ? getLast5Bills() : result) : getLast5Bills());
     console.log('Searching for:', result);
   };
 
@@ -155,7 +164,7 @@ export default function HomeScreen({ navigation }) {
             <Text
               style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
-              New Bill
+              {t('newBill')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -180,7 +189,7 @@ export default function HomeScreen({ navigation }) {
             <Text
               style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
-              View Bills
+              {t('allBills')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -216,7 +225,7 @@ export default function HomeScreen({ navigation }) {
             <Text
               style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
-              Products
+              {t('products')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -241,7 +250,7 @@ export default function HomeScreen({ navigation }) {
             <Text
               style={{ fontSize: wp('5%'), color: 'white', fontWeight: '600' }}
             >
-              Reports
+              {t('reports')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -274,7 +283,7 @@ export default function HomeScreen({ navigation }) {
             source={search}
           />
           <TextInput
-            placeholder="Search"
+            placeholder={t('search')}
             value={query}
             placeholderTextColor="gray"
             onChangeText={searchItem}
@@ -288,10 +297,16 @@ export default function HomeScreen({ navigation }) {
           // declerationRate="normal"
           overScrollMode="always"
         >
-          {Array.isArray(filteredBills) &&
-            filteredBills.map((b, index) => (
-              <View
+          {last5Bills.length === 0 ? (
+            <View style={{ alignItems: 'center', paddingVertical: hp('5%') }}>
+              <Text style={{ color: 'gray', fontSize: wp('5%') }}>{t('noBillsYet')}</Text>
+              <Text style={{ color: 'gray', fontSize: wp('4%'), marginTop: 8 }}>{t('printBillToSee')}</Text>
+            </View>
+          ) : (
+            last5Bills.map((b, index) => (
+              <TouchableOpacity
                 key={index}
+                onPress={() => navigation.navigate('BillDetail', { bill: b })}
                 style={{
                   padding: wp('4%'),
                   gap: '5%',
@@ -305,40 +320,32 @@ export default function HomeScreen({ navigation }) {
                   alignItems: 'center',
                 }}
               >
-                <View style={{ flexDirection: 'column', gap: 8 }}>
+                <View style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
                   <Text
                     style={{
-                      fontSize: wp('6%'),
+                      fontSize: wp('5%'),
                       color: 'white',
                       fontWeight: '600',
                     }}
                   >
-                    {b.name}
+                    {b.billNumber || 'N/A'}
                   </Text>
-                  {/* Dashed line */}
-                  {[30, 15, 20, 6].map((w, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        borderBottomWidth: 1,
-                        borderStyle: 'dashed',
-                        borderColor: 'white',
-                        width: wp(`${w}`),
-                      }}
-                    />
-                  ))}
+                  <Text style={{ color: 'gray', fontSize: wp('3.5%') }}>
+                    {b.items?.length || 0} items • {b.date || 'N/A'}
+                  </Text>
                 </View>
                 <Text
                   style={{
                     fontSize: wp('5%'),
-                    color: 'white',
-                    fontWeight: '600',
+                    color: '#DA7320',
+                    fontWeight: '700',
                   }}
                 >
-                  ₹ {b.price}.00
+                  ₹ {b.grandTotal?.toFixed(2) || '0.00'}
                 </Text>
-              </View>
-            ))}
+              </TouchableOpacity>
+            ))
+          )}
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>

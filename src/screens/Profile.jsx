@@ -26,13 +26,11 @@ import RNFS from 'react-native-fs';
 const PROFILE_STORAGE_KEY = '@user_profile';
 
 export default function Profile() {
-  const [shopName, setShopName] = useState('The Fresh Paradise');
-  const [email, setEmail] = useState('alameenkhan1431@gmail.com');
+  const [shopName, setShopName] = useState('Shop Name');
+  const [email, setEmail] = useState('user@gmail.com');
   const [phone, setPhone] = useState('+1 234 567 890');
-  const [address, setAddress] = useState(
-    '123 Main St, Bangalore, Karnataka, India',
-  );
-  const [gstNumber, setGstNumber] = useState('29ABCD**E1234**Z5');
+  const [address, setAddress] = useState('123 Main St, America, ');
+  const [gstNumber, setGstNumber] = useState('29A*BCD**E1234**Z5');
   const [taxRate, setTaxRate] = useState('0');
   const [shopLogo, setShopLogo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +44,7 @@ export default function Profile() {
       const profileData = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
       if (profileData) {
         const parsed = JSON.parse(profileData);
-        setShopName(parsed.shopName || 'The Fresh Paradise');
+        setShopName(parsed.shopName || 'The Shop Name');
         setEmail(parsed.email || '');
         setPhone(parsed.phone || '');
         setAddress(parsed.address || '');

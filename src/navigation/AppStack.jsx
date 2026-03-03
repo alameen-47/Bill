@@ -13,6 +13,7 @@ import Report from '../screens/Report.jsx';
 import Bill from '../screens/Bill.jsx';
 import Settings from '../screens/Settings.jsx';
 import Reciept from '../screens/Reciept.jsx';
+import BillDetail from '../screens/BillDetail.jsx';
 
 import settings from '../assets/icons/settings.png';
 import {
@@ -51,6 +52,7 @@ export default function AppStack() {
       <Stack.Screen name="Reports" component={Report} />
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="Reciept" component={Reciept} />
+      <Stack.Screen name="BillDetail" component={BillDetail} />
     </Stack.Navigator>
   );
 }

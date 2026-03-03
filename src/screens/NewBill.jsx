@@ -17,20 +17,19 @@ import searchImg from '../assets/icons/search.png';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/authContext';
 import { BillContext } from '../context/billContext';
+import { useLanguage } from '../context/languageContext';
 import orangePlus from '../assets/icons/orangePlus.png';
 import orangeMinus from '../assets/icons/orangeMinus.png';
 import trash from '../assets/icons/trash.png';
+
 export default function NewBill({ route }) {
   const [auth] = useAuth();
   const [search, setSearch] = useState('');
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-  const { billItems, decreaseQty, increaseQty, clearBill, total } =
-    useContext(BillContext);
+  const { billItems, decreaseQty, increaseQty, clearBill, total } = useContext(BillContext);
+  const { t } = useLanguage();
 
-  // -------------------------------------------
-
-  // ---------------------------------
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -40,35 +39,19 @@ export default function NewBill({ route }) {
           style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
         >
           <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
-            New Bill
+            {t('newBill')}
           </Text>
           <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: 'white' }} />
         </View>
-        {/* ///////SEARCHBAR//////
-        <View style={{ backgroundColor: '#2C2C2C', width: '100%', height: 'auto', borderRadius: 8, flexDirection: 'row', alignItems: 'center', textAlign: 'center', marginVertical: 8, gap: 8, paddingHorizontal: 8 }}>
-          <Image
-            resizeMode="contain"
-            style={{ width: wp('8%'), height: hp('4%') }}
-            source={searchImg}
-          />
-          <TextInput
-            placeholder="Search"
-            value={search}
-            placeholderTextColor="gray"
-            onChangeText={searchData}
-            style={{ color: 'white', fontSize: 20, fontWeight: '600' }}
-          />
-        </View> */}
-        {/* PRODUCTS */}
+        
+        {/* Bill Items List */}
         <FlatList
           data={billItems}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
             <View style={styles.productCard}>
               <View>
-                <Text
-                  style={{ fontSize: 25, color: 'white', fontWeight: '500' }}
-                >
+                <Text style={{ fontSize: 25, color: 'white', fontWeight: '500' }}>
                   {item.name.toUpperCase()}
                 </Text>
                 <Text style={{ fontSize: 20, color: 'white' }}>
@@ -77,11 +60,7 @@ export default function NewBill({ route }) {
               </View>
               <View style={{ flexDirection: 'row', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
                 <TouchableOpacity onPress={() => decreaseQty(item._id)}>
-                  <Image
-                    source={orangeMinus}
-                    resizeMode="contain"
-                    style={styles.quantityButtons}
-                  />
+                  <Image source={orangeMinus} resizeMode="contain" style={styles.quantityButtons} />
                 </TouchableOpacity>
                 <Text style={{ color: 'white', marginHorizontal: 12, fontSize: 20 }}>
                   {item.quantity}
@@ -92,42 +71,42 @@ export default function NewBill({ route }) {
               </View>
             </View>
           )}
+          ListEmptyComponent={
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <Text style={{ color: '#888', fontSize: 16 }}>{t('noBillsYet')}</Text>
+            </View>
+          }
         />
-        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>Total : </Text>
-          <Text style={{ color: 'white', fontSize: 28 }}> {total}/-</Text>
+        
+        {/* Total */}
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
+          <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>{t('grandTotal')}: </Text>
+          <Text style={{ color: '#DA7320', fontSize: 28, fontWeight: 'bold' }}>₹{total.toFixed(2)}/-</Text>
         </View>
-        {/* ADD NEW PRODUCT TO BILL BUTTON */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Products')}
-        >
-          <Text style={styles.buttonText}>+ Add Product</Text>
+        
+        {/* Add Product Button */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Products')}>
+          <Text style={styles.buttonText}>+ {t('addProduct')}</Text>
         </TouchableOpacity>
 
-        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Action Buttons */}
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
           <TouchableOpacity onPress={clearBill}>
-            <Image
-              source={trash}
-              style={styles.trashCan}
-              resizeMode="contain"
-            />
+            <Image source={trash} style={styles.trashCan} resizeMode="contain" />
           </TouchableOpacity>
           
-          <TouchableOpacity style={{ backgroundColor: '#DA7320', padding: 8, borderRadius: 8 }}>
-            <Text style={styles.buttonText}>💾 SAVE</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ backgroundColor: '#DA7320', padding: 8, borderRadius: 8 }}
+          <TouchableOpacity 
+            style={{ backgroundColor: '#DA7320', padding: 12, borderRadius: 8, flex: 1, marginLeft: 10 }}
             onPress={() => navigation.navigate('Reciept')}
           >
-            <Text style={styles.buttonText}>🖨️ PRINT</Text>
+            <Text style={styles.buttonText}>🖨️ {t('printReceipt')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
+
 const styles = {
   productCard: {
     width: '100%',
@@ -154,7 +133,7 @@ const styles = {
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
     fontWeight: '600',
   },

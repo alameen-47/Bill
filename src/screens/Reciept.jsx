@@ -18,14 +18,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { BillContext } from '../context/billContext';
 import { PrinterContext } from '../context/printerContext';
+import { useLanguage } from '../context/languageContext';
 import logo from '../assets/images/logo.png';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 
 export default function Reciept() {
-  const { billItems, total } = useContext(BillContext);
+  const { billItems, total, saveBill, clearBill } = useContext(BillContext);
   const { connectedPrinter } = useContext(PrinterContext);
-
+  const { t } = useLanguage();
   // Profile data state
   const [shopName, setShopName] = useState('My Shop');
   const [shopAddress, setShopAddress] = useState('123 Main Street, City');
@@ -33,16 +34,13 @@ export default function Reciept() {
   const [gstNumber, setGstNumber] = useState('');
   const [taxRate, setTaxRate] = useState('0');
   const [shopLogo, setShopLogo] = useState(null);
-
   // Discount state
   const [discountPercent, setDiscountPercent] = useState('0');
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [tempDiscount, setTempDiscount] = useState('0');
-
   // Payment method state
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
   // Payment methods
   const paymentMethods = ['CASH', 'CARD', 'UPI', 'OTHER'];
 
@@ -102,6 +100,7 @@ export default function Reciept() {
     setTempDiscount('0');
     setShowDiscountModal(false);
   };
+  const MAX_CHARS = 32;
 
   // ESC/POS commands for thermal printer
   const ESC = '\x1B';
@@ -119,7 +118,7 @@ export default function Reciept() {
       console.log('Logo print error:', error);
       // Fallback: print shop name
       try {
-        await connectedPrinter.write(ESC + '@');
+        await connectedPrinter.write('\x1B\x40'); // ESC @
         await connectedPrinter.write(ESC + 'a' + '\x01');
         await connectedPrinter.write(ESC + '!' + '\x30');
         await connectedPrinter.write(shopName.toUpperCase() + LF);
@@ -134,6 +133,7 @@ export default function Reciept() {
     let receipt = '';
     receipt += `  ${shopAddress}\n`;
     receipt += `  Phone: ${shopPhone}\n`;
+    receipt += '------------------------\n';
     if (gstNumber) {
       receipt += `  GST: ${gstNumber}\n`;
     }
@@ -200,7 +200,32 @@ export default function Reciept() {
       const receiptText = generateReceiptText();
       await connectedPrinter.write(receiptText);
 
-      Toast.show({ type: 'success', text1: 'Print Successful ✅' });
+      // Save bill to AsyncStorage after successful print
+      const billData = {
+        billNumber,
+        items: billItems,
+        subTotal: total,
+        tax: taxAmount,
+        discount: discountAmount,
+        grandTotal,
+        paymentMethod,
+        date: currentDate,
+        time: currentTime,
+        shopName,
+        shopAddress,
+        shopPhone,
+      };
+
+      await saveBill(billData);
+
+      // Clear the bill items after saving
+      clearBill();
+
+      Toast.show({
+        type: 'success',
+        text1: 'Print Successful ✅',
+        text2: 'Bill saved!',
+      });
     } catch (error) {
       console.log('Print Error:', error);
       Toast.show({ type: 'error', text1: 'Print Failed ❌' });
@@ -218,14 +243,14 @@ export default function Reciept() {
             style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
           >
             <Text style={{ fontSize: 55, color: 'white', fontWeight: 400 }}>
-              Receipt
+              {t('receipt')}
             </Text>
             <View className="w-[100%] border-b border-white " />
 
             {!connectedPrinter && (
               <View style={styles.noPrinterBox}>
                 <Text style={styles.noPrinterText}>
-                  ⚠️ No printer connected
+                  ⚠️ {t('printerNotConnected')}
                 </Text>
                 <Text style={styles.noPrinterSubtext}>
                   Go to Settings to connect a printer
@@ -251,7 +276,7 @@ export default function Reciept() {
                 }}
               >
                 <Text style={styles.optionButtonText}>
-                  🏷️ Discount: {discountPercent}%
+                  🏷️ {t('applyDiscount')}: {discountPercent}%
                 </Text>
               </TouchableOpacity>
 
@@ -265,7 +290,7 @@ export default function Reciept() {
                   {paymentMethod === 'CARD' && '💳 '}
                   {paymentMethod === 'UPI' && '📱 '}
                   {paymentMethod === 'OTHER' && '•••• '}
-                  {paymentMethod}
+                  {t(paymentMethod.toLowerCase()) || paymentMethod}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -336,13 +361,15 @@ export default function Reciept() {
                 <View style={styles.separator} />
 
                 <View style={styles.totalRow}>
-                  <Text style={styles.totalLabel}>SubTotal:</Text>
+                  <Text style={styles.totalLabel}>{t('subtotal')}:</Text>
                   <Text style={styles.totalValue}>₹{total.toFixed(2)}</Text>
                 </View>
 
                 {parseFloat(taxRate) > 0 && (
                   <View style={styles.totalRow}>
-                    <Text style={styles.totalLabel}>Tax ({taxRate}%):</Text>
+                    <Text style={styles.totalLabel}>
+                      {t('tax')} ({taxRate}%):
+                    </Text>
                     <Text style={styles.totalValue}>
                       ₹{taxAmount.toFixed(2)}
                     </Text>
@@ -352,7 +379,7 @@ export default function Reciept() {
                 {parseFloat(discountPercent) > 0 && (
                   <View style={styles.discountRow}>
                     <Text style={styles.discountLabel}>
-                      Discount ({discountPercent}%):
+                      {t('discount')} ({discountPercent}%):
                     </Text>
                     <Text style={styles.discountValue}>
                       -₹{discountAmount.toFixed(2)}
@@ -361,7 +388,7 @@ export default function Reciept() {
                 )}
 
                 <View style={styles.grandTotalRow}>
-                  <Text style={styles.grandTotalLabel}>GRAND TOTAL:</Text>
+                  <Text style={styles.grandTotalLabel}>{t('grandTotal')}:</Text>
                   <Text style={styles.grandTotalValue}>
                     ₹{grandTotal.toFixed(2)}
                   </Text>
@@ -371,13 +398,14 @@ export default function Reciept() {
 
                 <View style={styles.paymentSection}>
                   <Text style={styles.paymentText}>
-                    Payment: {paymentMethod}
+                    {t('paymentMethod')}:{' '}
+                    {t(paymentMethod.toLowerCase()) || paymentMethod}
                   </Text>
                 </View>
 
                 <View style={styles.footer}>
-                  <Text style={styles.footerText}>Thank you for shopping!</Text>
-                  <Text style={styles.footerText}>Please visit again!</Text>
+                  <Text style={styles.footerText}>{t('thankYou')}</Text>
+                  <Text style={styles.footerText}>{t('pleaseVisitAgain')}</Text>
                 </View>
               </View>
             </ScrollView>
@@ -391,127 +419,130 @@ export default function Reciept() {
             >
               <Text style={styles.printButtonText}>
                 🖨️{' '}
-                {connectedPrinter ? 'PRINT RECEIPT' : 'PRINTER NOT CONNECTED'}
+                {connectedPrinter
+                  ? t('printReceipt')
+                  : t('printerNotConnected')}
               </Text>
             </TouchableOpacity>
           </View>
+          {/* Discount Modal */}
+          <Modal
+            visible={showDiscountModal}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setShowDiscountModal(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>🏷️ {t('applyDiscount')}</Text>
+
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>{t('discount')}:</Text>
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.discountInput}
+                      value={tempDiscount}
+                      onChangeText={setTempDiscount}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="gray"
+                    />
+                    <Text style={styles.percentSymbol}>%</Text>
+                  </View>
+                </View>
+
+                {parseFloat(tempDiscount) > 0 && (
+                  <View style={styles.discountPreview}>
+                    <Text style={styles.discountPreviewText}>
+                      Discount Amount: ₹
+                      {((total * parseFloat(tempDiscount)) / 100).toFixed(2)}
+                    </Text>
+                  </View>
+                )}
+
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.clearButton]}
+                    onPress={handleClearDiscount}
+                  >
+                    <Text style={styles.modalButtonText}>{t('clearAll')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.cancelButton]}
+                    onPress={() => setShowDiscountModal(false)}
+                  >
+                    <Text style={styles.modalButtonText}>{t('cancel')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.applyButton]}
+                    onPress={handleApplyDiscount}
+                  >
+                    <Text style={styles.modalButtonText}>{t('apply')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+          {/* Payment Method Modal */}
+          <Modal
+            visible={showPaymentModal}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setShowPaymentModal(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  💳 {t('selectPaymentMethod')}
+                </Text>
+
+                <View style={styles.paymentOptions}>
+                  {paymentMethods.map(method => (
+                    <TouchableOpacity
+                      key={method}
+                      style={[
+                        styles.paymentOption,
+                        paymentMethod === method &&
+                          styles.paymentOptionSelected,
+                      ]}
+                      onPress={() => {
+                        setPaymentMethod(method);
+                        setShowPaymentModal(false);
+                        Toast.show({
+                          type: 'success',
+                          text1: 'Payment Method Selected',
+                          text2: method,
+                        });
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.paymentOptionText,
+                          paymentMethod === method &&
+                            styles.paymentOptionTextSelected,
+                        ]}
+                      >
+                        {method === 'CASH' && '💵 '}
+                        {method === 'CARD' && '💳 '}
+                        {method === 'UPI' && '📱 '}
+                        {method === 'OTHER' && '•••• '}
+                        {method}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => setShowPaymentModal(false)}
+                >
+                  <Text style={styles.modalButtonText}>{t('cancel')}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </SafeAreaView>
       </ScrollView>
-
-      {/* Discount Modal */}
-      <Modal
-        visible={showDiscountModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowDiscountModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>🏷️ Apply Discount</Text>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Discount Percentage:</Text>
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.discountInput}
-                  value={tempDiscount}
-                  onChangeText={setTempDiscount}
-                  keyboardType="numeric"
-                  placeholder="0"
-                  placeholderTextColor="gray"
-                />
-                <Text style={styles.percentSymbol}>%</Text>
-              </View>
-            </View>
-
-            {parseFloat(tempDiscount) > 0 && (
-              <View style={styles.discountPreview}>
-                <Text style={styles.discountPreviewText}>
-                  Discount Amount: ₹
-                  {((total * parseFloat(tempDiscount)) / 100).toFixed(2)}
-                </Text>
-              </View>
-            )}
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.clearButton]}
-                onPress={handleClearDiscount}
-              >
-                <Text style={styles.modalButtonText}>Clear</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setShowDiscountModal(false)}
-              >
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.applyButton]}
-                onPress={handleApplyDiscount}
-              >
-                <Text style={styles.modalButtonText}>Apply</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Payment Method Modal */}
-      <Modal
-        visible={showPaymentModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowPaymentModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>💳 Select Payment Method</Text>
-
-            <View style={styles.paymentOptions}>
-              {paymentMethods.map(method => (
-                <TouchableOpacity
-                  key={method}
-                  style={[
-                    styles.paymentOption,
-                    paymentMethod === method && styles.paymentOptionSelected,
-                  ]}
-                  onPress={() => {
-                    setPaymentMethod(method);
-                    setShowPaymentModal(false);
-                    Toast.show({
-                      type: 'success',
-                      text1: 'Payment Method Selected',
-                      text2: method,
-                    });
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.paymentOptionText,
-                      paymentMethod === method &&
-                        styles.paymentOptionTextSelected,
-                    ]}
-                  >
-                    {method === 'CASH' && '💵 '}
-                    {method === 'CARD' && '💳 '}
-                    {method === 'UPI' && '📱 '}
-                    {method === 'OTHER' && '•••• '}
-                    {method}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={() => setShowPaymentModal(false)}
-            >
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaProvider>
   );
 }
