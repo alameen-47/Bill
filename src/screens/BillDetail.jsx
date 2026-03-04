@@ -12,6 +12,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { useLanguage } from '../context/languageContext';
+import QRCode from 'react-native-qrcode-svg';
+
+// Backend server URL for QR code - change this to your actual server IP/domain
+const SERVER_URL = 'http://192.168.1.116:8000';
 
 export default function BillDetail({ route, navigation }) {
   const { bill } = route.params;
@@ -137,6 +141,22 @@ export default function BillDetail({ route, navigation }) {
           <View style={styles.footer}>
             <Text style={styles.footerText}>{t('thankYou')}</Text>
             <Text style={styles.footerText}>{t('pleaseVisitAgain')}</Text>
+          </View>
+
+          {/* QR Code Section */}
+          <View style={styles.qrSection}>
+            <Text style={styles.qrTitle}>📱 Scan to View Bill</Text>
+            <Text style={styles.qrSubtitle}>
+              Scan to view, print or share bill
+            </Text>
+            <View style={styles.qrContainer}>
+              <QRCode
+                value={`${SERVER_URL}/api/v1/bills/${bill.billNumber}/pdf`}
+                size={120}
+                color="#000"
+                backgroundColor="#fff"
+              />
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -333,5 +353,31 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
     fontStyle: 'italic',
+  },
+  // QR Code Styles
+  qrSection: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 30,
+    paddingTop: 20,
+    paddingBottom: 20,
+    backgroundColor: '#2C2C2C',
+    borderRadius: 10,
+  },
+  qrTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  qrSubtitle: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 15,
+  },
+  qrContainer: {
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 10,
   },
 });

@@ -24,7 +24,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { BillContext } from '../context/billContext';
 import { useLanguage } from '../context/languageContext';
-
 const PROFILE_STORAGE_KEY = '@user_profile';
 export default function HomeScreen({ navigation }) {
   const [query, setQuery] = useState('');
@@ -54,7 +53,7 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       loadBills();
-    }, [])
+    }, []),
   );
 
   const loadBills = () => {
@@ -66,11 +65,20 @@ export default function HomeScreen({ navigation }) {
     setQuery(text);
     const bills = getLast5Bills();
     // Filter bills by bill number or item names
-    const result = bills.filter(bill => 
-      bill.billNumber?.toLowerCase().includes(text.toLowerCase()) ||
-      bill.items?.some(item => item.name?.toLowerCase().includes(text.toLowerCase()))
+    const result = bills.filter(
+      bill =>
+        bill.billNumber?.toLowerCase().includes(text.toLowerCase()) ||
+        bill.items?.some(item =>
+          item.name?.toLowerCase().includes(text.toLowerCase()),
+        ),
     );
-    setLast5Bills(result.length > 0 || text === '' ? (text === '' ? getLast5Bills() : result) : getLast5Bills());
+    setLast5Bills(
+      result.length > 0 || text === ''
+        ? text === ''
+          ? getLast5Bills()
+          : result
+        : getLast5Bills(),
+    );
     console.log('Searching for:', result);
   };
 
@@ -102,25 +110,29 @@ export default function HomeScreen({ navigation }) {
               height: size,
               borderRadius: size / 2,
               overflow: 'hidden',
-              backgroundColor: 'white',
+              backgroundColor: 'black',
               borderWidth: 2,
               borderColor: 'white',
             }}
           >
             <Image
-              source={{ uri: profile.shopLogo }} // any URL image
+              source={
+                profile?.shopLogo
+                  ? { uri: profile.shopLogo }
+                  : require('../assets/icons/storeThumbnail.png')
+              }
               style={{
                 width: '100%',
-                height: '100%',
+                height: '90%',
               }}
-              resizeMode="cover"
+              resizeMode="contain"
               backgroundColor="black"
             />
           </View>
           <Text
             style={{ fontSize: wp('6%'), color: 'white', fontWeight: '600' }}
           >
-            {profile.shopName?.toUpperCase()}
+            {profile.shopName ? profile.shopName.toUpperCase() : 'Shop Name'}
           </Text>
         </View>
         <View
@@ -299,8 +311,12 @@ export default function HomeScreen({ navigation }) {
         >
           {last5Bills.length === 0 ? (
             <View style={{ alignItems: 'center', paddingVertical: hp('5%') }}>
-              <Text style={{ color: 'gray', fontSize: wp('5%') }}>{t('noBillsYet')}</Text>
-              <Text style={{ color: 'gray', fontSize: wp('4%'), marginTop: 8 }}>{t('printBillToSee')}</Text>
+              <Text style={{ color: 'gray', fontSize: wp('5%') }}>
+                {t('noBillsYet')}
+              </Text>
+              <Text style={{ color: 'gray', fontSize: wp('4%'), marginTop: 8 }}>
+                {t('printBillToSee')}
+              </Text>
             </View>
           ) : (
             last5Bills.map((b, index) => (

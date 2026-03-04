@@ -23,7 +23,6 @@ const billItemsSchema = await mongoose.Schema(
     },
     total: {
       type: Number,
-      required: true,
       min: 0,
     },
   },
@@ -57,12 +56,37 @@ const billSchema = await mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['CASH', 'CARD', 'UPI'],
+    enum: ['CASH', 'CARD', 'UPI', 'OTHER'],
     default: 'CASH',
+  },
+  // Shop information for PDF view
+  shopName: {
+    type: String,
+    default: 'My Shop',
+  },
+  shopAddress: {
+    type: String,
+    default: '',
+  },
+  shopPhone: {
+    type: String,
+    default: '',
+  },
+  gstNumber: {
+    type: String,
+    default: '',
+  },
+  date: {
+    type: String,
+    default: '',
+  },
+  time: {
+    type: String,
+    default: '',
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-});
+}, { timestamps: true });
 export default mongoose.model('Bill', billSchema);

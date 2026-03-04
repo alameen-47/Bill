@@ -3,6 +3,7 @@ import {
   createBillController,
   deleteSingleBillController,
   getAllBillController,
+  getQrCodeDetailsController,
   getSingleBillController,
   updateSingleBillController,
 } from '../controllers/billController.js';
@@ -14,5 +15,6 @@ router.get('/getAllBill', getAllBillController);
 router.get('/getSingleBill:id', getSingleBillController);
 router.put('/updateBill:id', updateSingleBillController);
 router.delete('/deleteBill:id', deleteSingleBillController);
+router.get('/:billNumber/pdf', getQrCodeDetailsController);
 
 export default router;

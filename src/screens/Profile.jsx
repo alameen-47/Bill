@@ -192,7 +192,10 @@ export default function Profile() {
               {shopLogo ? (
                 <Image style={styles.logoImage} source={{ uri: shopLogo }} />
               ) : (
-                <Image style={styles.logoImage} source={logo} />
+                <Image
+                  style={styles.logoImage}
+                  source={require('../assets/icons/storeThumbnail.png')}
+                />
               )}
               <View style={styles.editBadge}>
                 <Image source={pencil} style={{ width: 20, height: 20 }} />

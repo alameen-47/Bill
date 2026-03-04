@@ -8,7 +8,7 @@ import {
   TextInput,
   Modal,
 } from 'react-native';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   widthPercentageToDP as wp,
@@ -16,17 +16,24 @@ import {
 } from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import QRCode from 'react-native-qrcode-svg';
 import { BillContext } from '../context/billContext';
 import { PrinterContext } from '../context/printerContext';
 import { useLanguage } from '../context/languageContext';
-import logo from '../assets/images/logo.png';
+import { useNavigation } from '@react-navigation/native';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
+// Backend server URL for QR code - change this to your actual server IP/domain
+const SERVER_URL = 'http://192.168.1.116:8000';
 
 export default function Reciept() {
+  const qrRef = useRef();
+  const navigation = useNavigation();
   const { billItems, total, saveBill, clearBill } = useContext(BillContext);
   const { connectedPrinter } = useContext(PrinterContext);
   const { t } = useLanguage();
+  // QR Code ref for printing
+  const qrCodeRef = useRef(null);
   // Profile data state
   const [shopName, setShopName] = useState('My Shop');
   const [shopAddress, setShopAddress] = useState('123 Main Street, City');
@@ -131,6 +138,8 @@ export default function Reciept() {
 
   const generateReceiptText = () => {
     let receipt = '';
+    receipt += ' \n\n';
+
     receipt += `  ${shopAddress}\n`;
     receipt += `  Phone: ${shopPhone}\n`;
     receipt += '------------------------\n';
@@ -168,9 +177,58 @@ export default function Reciept() {
     receipt += '\n';
     receipt += '   Thank you for shopping!\n';
     receipt += '   Please visit again!\n';
-    receipt += '  \n\n\n';
+    receipt += ' \n\n';
 
     return receipt;
+  };
+
+  // Print QR Code using ESC/POS commands
+  const printQRCode = async qrData => {
+    if (!connectedPrinter) return;
+
+    try {
+      const ESC = '\x1B';
+      const GS = '\x1D';
+
+      // Set QR code model (Model 2)
+      await connectedPrinter.write(GS + 'k' + 'Q' + '\x03');
+
+      // Set QR code size (6 = medium)
+      await connectedPrinter.write(GS + 'k' + 'Q' + '\x06');
+
+      // Set error correction level (L=48, M=49, Q=50, H=51)
+      await connectedPrinter.write(GS + 'k' + 'Q' + '\x48');
+
+      // Store QR code data
+      const length = qrData.length + 3;
+      const lengthHigh = Math.floor(length / 256);
+      const lengthLow = length % 256;
+      await connectedPrinter.write(
+        GS +
+          'k' +
+          'Q' +
+          String.fromCharCode(lengthLow) +
+          String.fromCharCode(lengthHigh) +
+          qrData,
+      );
+
+      // Print QR code
+      await connectedPrinter.write(GS + 'k' + 'Q' + '\x0B');
+
+      // Line feeds
+      await connectedPrinter.write('\x0A\x0A');
+    } catch (error) {
+      console.log('QR Print Error:', error);
+      // Fallback: print text instruction
+      try {
+        await connectedPrinter.write('\n');
+        await connectedPrinter.write('   Scan for Digital Bill   \n');
+        await connectedPrinter.write('   ' + qrData + '\n');
+        await connectedPrinter.write('\n');
+      } catch (fallbackError) {
+        console.log('QR Fallback Error:', fallbackError);
+      }
+    }
   };
 
   const handlePrint = async () => {
@@ -200,6 +258,10 @@ export default function Reciept() {
       const receiptText = generateReceiptText();
       await connectedPrinter.write(receiptText);
 
+      // Print QR Code
+      const qrUrl = `${SERVER_URL}/api/v1/bills/${billNumber}/pdf`;
+      await printQRCode(qrUrl);
+
       // Save bill to AsyncStorage after successful print
       const billData = {
         billNumber,
@@ -226,6 +288,7 @@ export default function Reciept() {
         text1: 'Print Successful ✅',
         text2: 'Bill saved!',
       });
+      navigation.goBack();
     } catch (error) {
       console.log('Print Error:', error);
       Toast.show({ type: 'error', text1: 'Print Failed ❌' });
@@ -237,7 +300,7 @@ export default function Reciept() {
       <ScrollView>
         <SafeAreaView
           style={{ padding: hp('4%') }}
-          className="bg-Cdarkgray h-screen w-screen flex-1 flex justify-start items-start"
+          className="bg-Cdarkgray  w-screen flex-1 flex justify-start items-start"
         >
           <View
             style={{ alignItems: 'flex-start', width: '100%', top: hp('-5%') }}
@@ -357,9 +420,7 @@ export default function Reciept() {
                 ) : (
                   <Text style={styles.noItems}>No items in bill</Text>
                 )}
-
                 <View style={styles.separator} />
-
                 <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>{t('subtotal')}:</Text>
                   <Text style={styles.totalValue}>₹{total.toFixed(2)}</Text>
@@ -407,23 +468,39 @@ export default function Reciept() {
                   <Text style={styles.footerText}>{t('thankYou')}</Text>
                   <Text style={styles.footerText}>{t('pleaseVisitAgain')}</Text>
                 </View>
-              </View>
-            </ScrollView>
 
-            <TouchableOpacity
-              className={`p-3 rounded-lg w-full mt-4 ${
-                connectedPrinter ? 'bg-[#DA7320]' : 'bg-gray-500'
-              }`}
-              onPress={handlePrint}
-              disabled={!connectedPrinter}
-            >
-              <Text style={styles.printButtonText}>
-                🖨️{' '}
-                {connectedPrinter
-                  ? t('printReceipt')
-                  : t('printerNotConnected')}
-              </Text>
-            </TouchableOpacity>
+                {/* QR Code Section */}
+                <View style={styles.qrSection}>
+                  <Text style={styles.qrTitle}>📱 Scan to View Bill</Text>
+                  <Text style={styles.qrSubtitle}>
+                    Scan to view, print or share bill
+                  </Text>
+                  <View style={styles.qrContainer}>
+                    <QRCode
+                      getRef={qrRef}
+                      value={`${SERVER_URL}/api/v1/bills/${billNumber}/pdf`}
+                      size={120}
+                      color="#000"
+                      backgroundColor="#fff"
+                    />
+                  </View>
+                </View>
+              </View>
+              <TouchableOpacity
+                className={`p-3 rounded-lg w-full mt-4 ${
+                  connectedPrinter ? 'bg-[#DA7320]' : 'bg-gray-500'
+                }`}
+                onPress={handlePrint}
+                disabled={!connectedPrinter}
+              >
+                <Text style={styles.printButtonText}>
+                  🖨️{' '}
+                  {connectedPrinter
+                    ? t('printReceipt')
+                    : t('printerNotConnected')}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
           </View>
           {/* Discount Modal */}
           <Modal
@@ -904,5 +981,32 @@ const styles = {
   },
   paymentOptionTextSelected: {
     color: '#DA7320',
+  },
+  // QR Code Styles
+  qrSection: {
+    alignItems: 'center',
+    marginTop: 20,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    width: '100%',
+  },
+  qrTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  qrSubtitle: {
+    fontSize: 11,
+    color: '#666',
+    marginBottom: 10,
+  },
+  qrContainer: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
 };

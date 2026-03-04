@@ -1,5 +1,12 @@
-import { createContext, useMemo, useState, useEffect, useCallback } from 'react';
+import {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api/api';
 
 export const BillContext = createContext();
 
@@ -28,7 +35,7 @@ export const BillProvider = ({ children }) => {
   };
 
   // Save bills to AsyncStorage
-  const saveBillsToStorage = async (bills) => {
+  const saveBillsToStorage = async bills => {
     try {
       await AsyncStorage.setItem(BILLS_STORAGE_KEY, JSON.stringify(bills));
     } catch (error) {
@@ -36,8 +43,8 @@ export const BillProvider = ({ children }) => {
     }
   };
 
-  // Save a new bill after printing
-  const saveBill = useCallback((billData) => {
+  // Save a new bill after printing - saves to both local storage and backend
+  const saveBill = useCallback(async billData => {
     const newBill = {
       _id: Date.now().toString(),
       ...billData,
@@ -46,6 +53,7 @@ export const BillProvider = ({ children }) => {
       time: new Date().toLocaleTimeString(),
     };
 
+    // Save to local storage
     setSavedBills(prev => {
       const updated = [newBill, ...prev];
       // Keep only last 100 bills to avoid storage overflow
@@ -53,6 +61,41 @@ export const BillProvider = ({ children }) => {
       saveBillsToStorage(trimmed);
       return trimmed;
     });
+
+    // Also save to backend for QR code access
+    try {
+      const backendBillData = {
+        billNumber: billData.billNumber,
+        items: billData.items.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        subTotal: billData.subTotal,
+        tax: billData.tax || 0,
+        discount: billData.discount || 0,
+        grandTotal: billData.grandTotal,
+        paymentMethod: billData.paymentMethod,
+        shopName: billData.shopName,
+        shopAddress: billData.shopAddress,
+        shopPhone: billData.shopPhone,
+        date: billData.date,
+        time: billData.time,
+      };
+
+      const response = await api.post(
+        '/api/v1/bills/createBill',
+        backendBillData,
+      );
+
+      if (response.data.success) {
+        console.log('Bill saved to backend successfully');
+      }
+    } catch (error) {
+      console.log('Error saving bill to backend:', error);
+      // Don't fail the whole operation if backend save fails
+      // Local save already succeeded
+    }
   }, []);
 
   // Get last 5 bills
@@ -66,65 +109,79 @@ export const BillProvider = ({ children }) => {
   }, [savedBills]);
 
   // Get bills filtered by date range
-  const getBillsByDateRange = useCallback((startDate, endDate) => {
-    return savedBills.filter(bill => {
-      const billDate = new Date(bill.createdAt);
-      return billDate >= startDate && billDate <= endDate;
-    });
-  }, [savedBills]);
+  const getBillsByDateRange = useCallback(
+    (startDate, endDate) => {
+      return savedBills.filter(bill => {
+        const billDate = new Date(bill.createdAt);
+        return billDate >= startDate && billDate <= endDate;
+      });
+    },
+    [savedBills],
+  );
 
   // Get daily sales for reports
-  const getDailySales = useCallback((days = 7) => {
-    const now = new Date();
-    const sales = [];
-    
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toLocaleDateString();
-      
-      const dayBills = savedBills.filter(bill => {
-        const billDate = new Date(bill.createdAt).toLocaleDateString();
-        return billDate === dateStr;
-      });
-      
-      sales.push({
-        date: dateStr,
-        total: dayBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0),
-        count: dayBills.length,
-      });
-    }
-    return sales;
-  }, [savedBills]);
+  const getDailySales = useCallback(
+    (days = 7) => {
+      const now = new Date();
+      const sales = [];
+
+      for (let i = days - 1; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toLocaleDateString();
+
+        const dayBills = savedBills.filter(bill => {
+          const billDate = new Date(bill.createdAt).toLocaleDateString();
+          return billDate === dateStr;
+        });
+
+        sales.push({
+          date: dateStr,
+          total: dayBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0),
+          count: dayBills.length,
+        });
+      }
+      return sales;
+    },
+    [savedBills],
+  );
 
   // Get monthly sales for reports
-  const getMonthlySales = useCallback((months = 6) => {
-    const now = new Date();
-    const sales = [];
-    
-    for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthStr = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-      
-      const monthBills = savedBills.filter(bill => {
-        const billDate = new Date(bill.createdAt);
-        return billDate.getMonth() === date.getMonth() && 
-               billDate.getFullYear() === date.getFullYear();
-      });
-      
-      sales.push({
-        month: monthStr,
-        total: monthBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0),
-        count: monthBills.length,
-      });
-    }
-    return sales;
-  }, [savedBills]);
+  const getMonthlySales = useCallback(
+    (months = 6) => {
+      const now = new Date();
+      const sales = [];
+
+      for (let i = months - 1; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthStr = date.toLocaleString('default', {
+          month: 'short',
+          year: 'numeric',
+        });
+
+        const monthBills = savedBills.filter(bill => {
+          const billDate = new Date(bill.createdAt);
+          return (
+            billDate.getMonth() === date.getMonth() &&
+            billDate.getFullYear() === date.getFullYear()
+          );
+        });
+
+        sales.push({
+          month: monthStr,
+          total: monthBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0),
+          count: monthBills.length,
+        });
+      }
+      return sales;
+    },
+    [savedBills],
+  );
 
   // Get yearly sales for reports
   const getYearlySales = useCallback(() => {
     const yearlyData = {};
-    
+
     savedBills.forEach(bill => {
       const year = new Date(bill.createdAt).getFullYear();
       if (!yearlyData[year]) {
@@ -133,7 +190,7 @@ export const BillProvider = ({ children }) => {
       yearlyData[year].total += bill.grandTotal || 0;
       yearlyData[year].count += 1;
     });
-    
+
     return Object.entries(yearlyData)
       .map(([year, data]) => ({ year, ...data }))
       .sort((a, b) => a.year - b.year);
@@ -141,17 +198,23 @@ export const BillProvider = ({ children }) => {
 
   // Get report summary
   const getReportSummary = useCallback(() => {
-    const totalSales = savedBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+    const totalSales = savedBills.reduce(
+      (sum, b) => sum + (b.grandTotal || 0),
+      0,
+    );
     const totalBills = savedBills.length;
     const averageBill = totalBills > 0 ? totalSales / totalBills : 0;
-    
+
     // Today's sales
     const today = new Date().toLocaleDateString();
-    const todayBills = savedBills.filter(b => 
-      new Date(b.createdAt).toLocaleDateString() === today
+    const todayBills = savedBills.filter(
+      b => new Date(b.createdAt).toLocaleDateString() === today,
     );
-    const todaySales = todayBills.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
-    
+    const todaySales = todayBills.reduce(
+      (sum, b) => sum + (b.grandTotal || 0),
+      0,
+    );
+
     return {
       totalSales,
       totalBills,
@@ -234,4 +297,3 @@ export const BillProvider = ({ children }) => {
     </BillContext.Provider>
   );
 };
-
