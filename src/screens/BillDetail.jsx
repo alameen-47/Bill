@@ -22,7 +22,10 @@ export default function BillDetail({ route, navigation }) {
       <SafeAreaProvider>
         <SafeAreaView style={styles.container}>
           <Text style={styles.errorText}>Bill not found</Text>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
         </SafeAreaView>
@@ -36,9 +39,6 @@ export default function BillDetail({ route, navigation }) {
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={styles.backBtnText}>← Back</Text>
-            </TouchableOpacity>
             <Text style={styles.headerTitle}>{t('receipt')}</Text>
             <View style={styles.headerLine} />
           </View>
@@ -66,7 +66,9 @@ export default function BillDetail({ route, navigation }) {
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{t('paymentMethod')}:</Text>
-              <Text style={styles.infoValue}>{bill.paymentMethod || 'CASH'}</Text>
+              <Text style={styles.infoValue}>
+                {bill.paymentMethod || 'CASH'}
+              </Text>
             </View>
           </View>
 
@@ -74,7 +76,7 @@ export default function BillDetail({ route, navigation }) {
           <View style={styles.itemsCard}>
             <Text style={styles.sectionTitle}>{t('items')}</Text>
             <View style={styles.separator} />
-            
+
             {bill.items && bill.items.length > 0 ? (
               bill.items.map((item, index) => (
                 <View key={index} style={styles.itemRow}>
@@ -90,7 +92,7 @@ export default function BillDetail({ route, navigation }) {
             ) : (
               <Text style={styles.noItems}>No items</Text>
             )}
-            
+
             <View style={styles.separator} />
           </View>
 
@@ -98,26 +100,36 @@ export default function BillDetail({ route, navigation }) {
           <View style={styles.totalsCard}>
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>{t('subtotal')}:</Text>
-              <Text style={styles.totalValue}>₹{bill.subTotal?.toFixed(2) || '0.00'}</Text>
+              <Text style={styles.totalValue}>
+                ₹{bill.subTotal?.toFixed(2) || '0.00'}
+              </Text>
             </View>
-            
+
             {bill.tax > 0 && (
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>{t('tax')}:</Text>
-                <Text style={styles.totalValue}>₹{bill.tax?.toFixed(2) || '0.00'}</Text>
+                <Text style={styles.totalValue}>
+                  ₹{bill.tax?.toFixed(2) || '0.00'}
+                </Text>
               </View>
             )}
-            
+
             {bill.discount > 0 && (
               <View style={styles.totalRow}>
-                <Text style={[styles.totalLabel, styles.discountLabel]}>{t('discount')}:</Text>
-                <Text style={[styles.totalValue, styles.discountValue]}>-₹{bill.discount?.toFixed(2) || '0.00'}</Text>
+                <Text style={[styles.totalLabel, styles.discountLabel]}>
+                  {t('discount')}:
+                </Text>
+                <Text style={[styles.totalValue, styles.discountValue]}>
+                  -₹{bill.discount?.toFixed(2) || '0.00'}
+                </Text>
               </View>
             )}
-            
+
             <View style={[styles.totalRow, styles.grandTotalRow]}>
               <Text style={styles.grandTotalLabel}>{t('grandTotal')}:</Text>
-              <Text style={styles.grandTotalValue}>₹{bill.grandTotal?.toFixed(2) || '0.00'}</Text>
+              <Text style={styles.grandTotalValue}>
+                ₹{bill.grandTotal?.toFixed(2) || '0.00'}
+              </Text>
             </View>
           </View>
 
@@ -323,4 +335,3 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 });
-
