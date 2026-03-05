@@ -21,8 +21,10 @@ import api from '../api/api';
 import { useAuth } from '../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 import { BillContext } from '../context/billContext';
+import { useLanguage } from '../context/languageContext';
 
 export default function Products() {
+  const { t } = useLanguage();
   const [auth] = useAuth('');
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,7 +60,7 @@ export default function Products() {
       console.log('Error in fetchProduct Frontend', error);
     }
   };
-  
+
   //FETCH-ALLCATEGORIES
   const fetchAllCategories = async () => {
     try {
@@ -263,8 +265,13 @@ export default function Products() {
               </TouchableOpacity>
             )}
           />
-          
         </View>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate('AddProduct')}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
         {/* ----------------MODAL------------------------- */}
         <Modal
           animationType="slide"
@@ -400,5 +407,28 @@ const styles = {
     color: 'white',
     fontSize: 28,
     fontWeight: 'bold',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 30,
+    right: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#DA7320',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+  },
+
+  fabText: {
+    fontSize: 30,
+    color: '#fff',
+    fontWeight: 'bold',
+    lineHeight: 32,
   },
 };
