@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'http://192.168.1.116:8000';
+const SERVER_URL = 'http://192.168.1.103:8000';
 
 export default function Reciept() {
   const qrRef = useRef();
@@ -182,61 +182,146 @@ export default function Reciept() {
     return receipt;
   };
 
-  // Print QR Code using ESC/POS commands
+  // // Print QR Code using proper ESC/POS commands
+  // const printQRCode = async qrData => {
+  //   if (!connectedPrinter) return;
+
+  //   const ESC = '\x1B';
+  //   const GS = '\x1D';
+  //   let success = false;
+
+  //   // Method 1: Try ESC/POS QR code commands with correct byte sequences
+  //   try {
+  //     // ESC/POS QR Code Commands:
+  //     // 1. GS k m - Set QR Code Model (m=0x01 for Model 2)
+  //     await connectedPrinter.write(GS + 'k' + '\x01');
+
+  //     // 2. GS k n - Set QR Code Size (n = 3-16, recommended 6)
+  //     await connectedPrinter.write(GS + 'k' + '\x06');
+
+  //     // 3. GS k m n - Set Error Correction Level (m=0x43='C', n=0x00-0x03)
+  //     // 0x00=L, 0x01=M, 0x02=Q, 0x03=H
+  //     await connectedPrinter.write(GS + 'k' + 'C' + '\x03');
+
+  //     // 4. GS k p nL nH d1...dk - Store QR Code Data
+  //     // p = 0x31 (auto encoding mode)
+  //     const dataLength = qrData.length;
+  //     const nL = dataLength & 0xFF;
+  //     const nH = (dataLength >> 8) & 0xFF;
+
+  //     const storeCmd = GS + 'k' + '1' + String.fromCharCode(nL) + String.fromCharCode(nH) + qrData;
+  //     await connectedPrinter.write(storeCmd);
+
+  //     // 5. GS k m - Print QR Code (m = 0)
+  //     await connectedPrinter.write(GS + 'k' + '\x00');
+
+  //     // Line feeds
+  //     await connectedPrinter.write('\x0A\x0A');
+  //     success = true;
+  //     console.log('QR Code printed via ESC/POS Method 1');
+  //   } catch (escError) {
+  //     console.log('ESC/POS QR print error (Method 1):', escError);
+  //   }
+
+  //   // Method 2: Try simpler raw byte approach
+  //   if (!success) {
+  //     try {
+  //       // Build command as pure bytes using String.fromCharCode
+  //       let cmd = '';
+  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x01); // Model 2
+  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x06); // Size 6
+  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x43, 0x03); // Error correction H
+
+  //       const dlen = qrData.length;
+  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x31, dlen % 256, Math.floor(dlen / 256));
+  //       cmd += qrData;
+  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x00); // Print
+  //       cmd += '\x0A\x0A';
+
+  //       await connectedPrinter.write(cmd);
+  //       success = true;
+  //       console.log('QR Code printed via Method 2 (raw bytes)');
+  //     } catch (escError2) {
+  //       console.log('ESC/POS QR print error (Method 2):', escError2);
+  //     }
+  //   }
+
+  //   // Method 3: Try using printImage if available (convert QR to image first)
+  //   if (!success && connectedPrinter.printImage) {
+  //     try {
+  //       // Since we can't easily get the QR as base64, try generating it
+  //       // This is a fallback that requires additional libraries in a real app
+  //       console.log('QR printImage method not available, trying other methods');
+  //     } catch (imgError) {
+  //       console.log('QR image print error:', imgError);
+  //     }
+  //   }
+
+  //   // Fallback: Print URL as text if all QR methods fail
+  //   if (!success) {
+  //     try {
+  //       await connectedPrinter.write('\n');
+  //       await connectedPrinter.write('   📱 Scan for Digital Bill   \n');
+  //       await connectedPrinter.write('   ' + qrData + '\n');
+  //       await connectedPrinter.write('\n');
+  //       console.log('Printed QR URL as text fallback');
+  //     } catch (fallbackError) {
+  //       console.log('QR text fallback error:', fallbackError);
+  //     }
+  //   }
+  // };
   const printQRCode = async qrData => {
     if (!connectedPrinter) return;
 
     try {
-      const ESC = '\x1B';
       const GS = '\x1D';
 
-      // Set QR code model (Model 2)
-      await connectedPrinter.write(GS + 'k' + 'Q' + '\x03');
+      const storeLen = qrData.length + 3;
+      const pL = storeLen % 256;
+      const pH = Math.floor(storeLen / 256);
 
-      // Set QR code size (6 = medium)
-      await connectedPrinter.write(GS + 'k' + 'Q' + '\x06');
+      // Select QR model
+      await connectedPrinter.write(GS + '(k' + '\x04\x00' + '\x31\x41\x32\x00');
 
-      // Set error correction level (L=48, M=49, Q=50, H=51)
-      await connectedPrinter.write(GS + 'k' + 'Q' + '\x48');
+      // Set size
+      await connectedPrinter.write(GS + '(k' + '\x03\x00' + '\x31\x43\x06');
 
-      // Store QR code data
-      const length = qrData.length + 3;
-      const lengthHigh = Math.floor(length / 256);
-      const lengthLow = length % 256;
+      // Set error correction
+      await connectedPrinter.write(GS + '(k' + '\x03\x00' + '\x31\x45\x30');
+
+      // Store data
       await connectedPrinter.write(
         GS +
-          'k' +
-          'Q' +
-          String.fromCharCode(lengthLow) +
-          String.fromCharCode(lengthHigh) +
+          '(k' +
+          String.fromCharCode(pL) +
+          String.fromCharCode(pH) +
+          '\x31\x50\x30' +
           qrData,
       );
 
-      // Print QR code
-      await connectedPrinter.write(GS + 'k' + 'Q' + '\x0B');
+      // Print QR
+      await connectedPrinter.write(GS + '(k' + '\x03\x00' + '\x31\x51\x30');
 
-      // Line feeds
-      await connectedPrinter.write('\x0A\x0A');
+      await connectedPrinter.write('\n\n');
+      await connectedPrinter.write('   Scan for Digital Bill   \n');
+      await connectedPrinter.write('\n\n');
     } catch (error) {
       console.log('QR Print Error:', error);
-      // Fallback: print text instruction
-      try {
-        await connectedPrinter.write('\n');
-        await connectedPrinter.write('   Scan for Digital Bill   \n');
-        await connectedPrinter.write('   ' + qrData + '\n');
-        await connectedPrinter.write('\n');
-      } catch (fallbackError) {
-        console.log('QR Fallback Error:', fallbackError);
-      }
     }
   };
-
   const handlePrint = async () => {
     if (!connectedPrinter) {
       Toast.show({
         type: 'error',
         text1: 'No Printer Connected',
         text2: 'Please connect a printer in Settings first',
+      });
+      return;
+    }
+    if (!billItems.length > 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Add Items to the Bill',
       });
       return;
     }

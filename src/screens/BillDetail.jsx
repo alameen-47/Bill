@@ -15,7 +15,7 @@ import { useLanguage } from '../context/languageContext';
 import QRCode from 'react-native-qrcode-svg';
 
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'http://192.168.1.116:8000';
+const SERVER_URL = 'http://192.168.1.103:8000';
 
 export default function BillDetail({ route, navigation }) {
   const { bill } = route.params;

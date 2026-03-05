@@ -88,5 +88,10 @@ const billSchema = await mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  // Store userId as a string for easier frontend access
+  userId: {
+    type: String,
+    default: null,
+  },
 }, { timestamps: true });
 export default mongoose.model('Bill', billSchema);

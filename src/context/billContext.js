@@ -7,6 +7,7 @@ import {
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
+import { useAuth } from './authContext';
 
 export const BillContext = createContext();
 
@@ -15,6 +16,8 @@ const BILLS_STORAGE_KEY = '@saved_bills';
 export const BillProvider = ({ children }) => {
   const [billItems, setBillItems] = useState([]);
   const [savedBills, setSavedBills] = useState([]);
+  const [auth, setAuth] = useAuth ? useAuth() : [{}, () => {}];
+  const token = auth?.token;
 
   // Load saved bills from AsyncStorage on mount
   useEffect(() => {
@@ -51,6 +54,7 @@ export const BillProvider = ({ children }) => {
       createdAt: new Date().toISOString(),
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString(),
+      userId: auth?.user?.id || null, // Store user ID
     };
 
     // Save to local storage
@@ -62,7 +66,7 @@ export const BillProvider = ({ children }) => {
       return trimmed;
     });
 
-    // Also save to backend for QR code access
+    // Also save to backend for QR code access (with user ID if logged in)
     try {
       const backendBillData = {
         billNumber: billData.billNumber,
@@ -83,20 +87,53 @@ export const BillProvider = ({ children }) => {
         time: billData.time,
       };
 
-      const response = await api.post(
-        '/api/v1/bills/createBill',
-        backendBillData,
-      );
+      // Only save to backend if we have a token (user is logged in)
+      if (token) {
+        const response = await api.post(
+          '/api/v1/bills/createBill',
+          backendBillData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
-      if (response.data.success) {
-        console.log('Bill saved to backend successfully');
+        if (response.data.success) {
+          console.log('Bill saved to backend successfully with user ID');
+        }
+      } else {
+        console.log('No token - bill saved locally only');
       }
     } catch (error) {
-      console.log('Error saving bill to backend:', error);
+      console.log('Error saving bill to backend:', error?.response?.data || error.message);
       // Don't fail the whole operation if backend save fails
       // Local save already succeeded
     }
-  }, []);
+  }, [token, auth?.user]);
+
+  // Get bills from backend based on user ID
+  const fetchBillsFromBackend = useCallback(async () => {
+    if (!token) {
+      console.log('No token - cannot fetch from backend');
+      return savedBills;
+    }
+
+    try {
+      const response = await api.get('/api/v1/bills/getAllBill', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        const backendBills = response.data.allBills;
+        // Update local storage with backend bills
+        setSavedBills(backendBills);
+        await saveBillsToStorage(backendBills);
+        return backendBills;
+      }
+    } catch (error) {
+      console.log('Error fetching bills from backend:', error?.response?.data || error.message);
+    }
+    return savedBills;
+  }, [token, savedBills]);
 
   // Get last 5 bills
   const getLast5Bills = useCallback(() => {
@@ -291,6 +328,7 @@ export const BillProvider = ({ children }) => {
         getYearlySales,
         getReportSummary,
         loadSavedBills,
+        fetchBillsFromBackend,
       }}
     >
       {children}
