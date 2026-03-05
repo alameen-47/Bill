@@ -12,6 +12,10 @@
 	<string>We need Bluetooth access to connect to printers</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>We need Bluetooth access to connect to printers</string>
+	<key>UISupportedExternalAccessoryProtocols</key>
+	<array>
+		<string>com.apple.m1</string>
+	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need location access to scan for Bluetooth printers</string>
 	<key>UIBackgroundModes</key>
@@ -65,3 +69,4 @@
 	<false/>
 </dict>
 </plist>
+
