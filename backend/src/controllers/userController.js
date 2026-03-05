@@ -3,12 +3,42 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
 export const registerController = async (req, res) => {
-  const { shopName, email, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ shopName, email, password: hashed });
-  res
-    .status(200)
-    .json({ success: true, message: 'User Registered Succesfully', user });
+  try {
+    const { shopName, email, password } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already registered'
+      });
+    }
+    
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ shopName, email, password: hashed });
+    
+    // Generate token for auto-login after registration
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
+    
+    res.status(200).json({ 
+      success: true, 
+      message: 'User Registered Succesfully', 
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        shopName: user.shopName,
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
 };
 
 export const loginController = async (req, res) => {
@@ -32,13 +62,14 @@ export const loginController = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
-    // data along with token
+    // data along with token (include shopName)
     res.json({
       success: true,
       token,
       user: {
         id: user._id,
         email: user.email,
+        shopName: user.shopName,
       },
     });
   } catch (error) {

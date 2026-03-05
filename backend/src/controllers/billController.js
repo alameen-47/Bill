@@ -17,6 +17,8 @@ export const createBillController = async (req, res) => {
       billNumber,
     } = req.body;
 
+    const userId = req.user.id; // Get user ID from auth middleware
+
     if (!items || items.length === 0) {
       return res.status(400).json({
         success: false,
@@ -38,6 +40,7 @@ export const createBillController = async (req, res) => {
       gstNumber: gstNumber || '',
       date: date || new Date().toLocaleDateString(),
       time: time || new Date().toLocaleTimeString(),
+      createdBy: userId, // Link bill to user
     });
 
     return res.status(201).json({
@@ -56,7 +59,9 @@ export const createBillController = async (req, res) => {
 };
 export const getAllBillController = async (req, res) => {
   try {
-    const allBills = await billModel.find();
+    const userId = req.user.id; // Get user ID from auth middleware
+    // Get only bills created by this user
+    const allBills = await billModel.find({ createdBy: userId }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       message: 'All Bills Fetched Succesfully',
@@ -74,7 +79,10 @@ export const getAllBillController = async (req, res) => {
 export const getSingleBillController = async (req, res) => {
   try {
     const { billNumber } = req.body;
-    const singleBill = await billModel.findOne({ billNumber });
+    const userId = req.user.id;
+    
+    // Find bill belonging to this user
+    const singleBill = await billModel.findOne({ billNumber, createdBy: userId });
     if (!singleBill) {
       res.status(400).json({
         success: false,
@@ -98,6 +106,7 @@ export const getSingleBillController = async (req, res) => {
 export const updateSingleBillController = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
     const {
       billNumber,
       items,
@@ -107,8 +116,10 @@ export const updateSingleBillController = async (req, res) => {
       grandTotal,
       paymentMethod,
     } = req.body;
-    const singleBill = await billModel.findByIdAndUpdate(
-      id,
+    
+    // Update only if bill belongs to this user
+    const singleBill = await billModel.findOneAndUpdate(
+      { _id: id, createdBy: userId },
       { items, subTotal, discount, tax, grandTotal, paymentMethod },
       {
         new: true,
@@ -118,7 +129,7 @@ export const updateSingleBillController = async (req, res) => {
     if (!singleBill) {
       res.status(400).json({
         success: false,
-        message: `${billNumber} - Bill Details not Found`,
+        message: `${billNumber} - Bill Details not Found or unauthorized`,
       });
     }
     return res.status(200).json({
@@ -138,13 +149,25 @@ export const updateSingleBillController = async (req, res) => {
 export const deleteSingleBillController = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
+    
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'Bill Id is Invalid / Not Mentioned ',
       });
     }
-    await billModel.findByIdAndDelete(id);
+    
+    // Delete only if bill belongs to this user
+    const deletedBill = await billModel.findOneAndDelete({ _id: id, createdBy: userId });
+    
+    if (!deletedBill) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bill not found or unauthorized',
+      });
+    }
+    
     return res
       .status(200)
       .json({ success: true, message: 'Product Deleted Succesfully' });

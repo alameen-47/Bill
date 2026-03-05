@@ -3,6 +3,7 @@ import categoryModel from '../models/categoryModel.js';
 export const createCategoryController = async (req, res) => {
   try {
     let { category } = req.body;
+    const userId = req.user.id; // Get user ID from auth middleware
 
     if (!category) {
       return res.status(400).json({
@@ -11,7 +12,8 @@ export const createCategoryController = async (req, res) => {
       });
     }
 
-    const existingCategory = await categoryModel.findOne({ category });
+    // Check if category exists for THIS USER only
+    const existingCategory = await categoryModel.findOne({ category, createdBy: userId });
     if (existingCategory) {
       return res.status(400).json({
         success: false,
@@ -19,7 +21,8 @@ export const createCategoryController = async (req, res) => {
       });
     }
 
-    const newCategory = await categoryModel.create({ category });
+    // Create category linked to user
+    const newCategory = await categoryModel.create({ category, createdBy: userId });
 
     return res.status(201).json({
       success: true,
@@ -34,16 +37,20 @@ export const createCategoryController = async (req, res) => {
     });
   }
 };
+
 export const getSingleCategoryController = async (req, res) => {
   try {
     const { categoryId } = req.params;
+    const userId = req.user.id;
+    
     if (!categoryId) {
       return res.status(400).json({
         success: false,
         message: 'Category Id is Required',
       });
     }
-    const category = await categoryModel.findById(categoryId);
+    // Find category belonging to this user
+    const category = await categoryModel.findOne({ _id: categoryId, createdBy: userId });
     if (category) {
       return res.status(200).json({
         success: true,
@@ -59,9 +66,11 @@ export const getSingleCategoryController = async (req, res) => {
     });
   }
 };
+
 export const deleteCategoryController = async (req, res) => {
   try {
     const { categoryId } = req.params;
+    const userId = req.user.id;
 
     if (!categoryId) {
       return res.status(400).json({
@@ -69,9 +78,18 @@ export const deleteCategoryController = async (req, res) => {
         message: 'Category Id is Required',
       });
     }
-    await categoryModel.findByIdAndDelete(categoryId);
+    // Delete only if category belongs to this user
+    const deletedCategory = await categoryModel.findOneAndDelete({ _id: categoryId, createdBy: userId });
+    
+    if (!deletedCategory) {
+      return res.status(404).json({
+        success: false,
+        message: 'Category not found or unauthorized',
+      });
+    }
+    
     return res.status(200).json({
-      success: false,
+      success: true,
       message: 'Category Deleted Succesfully',
     });
   } catch (error) {
@@ -81,9 +99,12 @@ export const deleteCategoryController = async (req, res) => {
     });
   }
 };
+
 export const getAllCategoryController = async (req, res) => {
   try {
-    const allCategory = await categoryModel.find();
+    const userId = req.user.id;
+    // Get only categories created by this user
+    const allCategory = await categoryModel.find({ createdBy: userId });
     return res
       .status(200)
       .json({ success: true, message: 'Fetched All Category', allCategory });
@@ -95,3 +116,4 @@ export const getAllCategoryController = async (req, res) => {
     });
   }
 };
+
