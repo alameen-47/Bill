@@ -263,6 +263,7 @@ export default function Products() {
               </TouchableOpacity>
             )}
           />
+          
         </View>
         {/* ----------------MODAL------------------------- */}
         <Modal

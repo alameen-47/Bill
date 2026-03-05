@@ -151,12 +151,12 @@ export default function Settings() {
 
       const testText =
         '================================\n' +
-        '         TEST PRINT\n' +
+        '   TEST PRINT\n' +
         '================================\n' +
-        '     This is a test page.\n' +
-        '     Printer is working!\n' +
+        '   This is a test page.\n' +
+        '   Printer is working!\n' +
         '================================\n' +
-        '         Thank You!\n';
+        '   Thank You!\n\n\n\n';
 
       await connectedPrinter.write(testText);
       Toast.show({ type: 'success', text1: 'Test Print Complete' });

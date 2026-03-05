@@ -30,15 +30,19 @@ export default function AppStack() {
         headerTitle: '',
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: '#171717' },
-
         headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-            <Image
-              style={styles.settings}
-              source={settings}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+          <View style={styles.settingsContainer}>
+            <TouchableOpacity
+              className="flex justify-center align-middle items-center "
+              onPress={() => navigation.navigate('Settings')}
+            >
+              <Image
+                style={styles.settings}
+                source={settings}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
         ),
       })}
     >
@@ -57,8 +61,18 @@ export default function AppStack() {
   );
 }
 const styles = {
+  settingsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  settingsButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   settings: {
-    width: wp('8%'),
-    height: hp('5%'),
+    width: wp(9),
+    height: hp(4),
   },
 };
