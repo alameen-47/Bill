@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'http://192.168.1.105:8000';
+const SERVER_URL = 'https://bill-h3p1.onrender.com/';
 
 export default function Reciept() {
   const qrRef = useRef();
