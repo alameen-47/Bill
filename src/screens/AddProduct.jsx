@@ -31,7 +31,6 @@ export default function Products() {
   const [allCategory, setAllCategory] = useState([]);
   const token = auth.token;
 
-  console.log(value, '----VALUE----');
 
   // ADD CATEGORY
   const addCategory = async () => {
@@ -97,7 +96,6 @@ export default function Products() {
           type: 'success',
           text1: 'Product Created Succesfully ✅',
         });
-        console.log('Product Created Succesfully');
         navigation.navigate('Products');
       }
     } catch (error) {

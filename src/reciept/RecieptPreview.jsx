@@ -1,7 +1,6 @@
 import { View, Text } from 'react-native';
 
 export default function ReceiptPreview({ text }) {
-  console.log('ReceiptPreview text:', text);
   return (
     <View
       style={{

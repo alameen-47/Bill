@@ -5,7 +5,6 @@ import AuthStack from './AuthStack.jsx';
 import AppStack from './AppStack.jsx';
 const AppNavigator = () => {
   const [auth] = useAuth();
-  // console.log('AUTH STATE ->', auth);
   return auth?.token ? <AppStack /> : <AuthStack />;
 };
 

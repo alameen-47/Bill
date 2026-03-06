@@ -90,7 +90,9 @@ export default function Reciept() {
   const taxAmount = getTaxAmount();
   const discountAmount = (total * (parseFloat(discountPercent) || 0)) / 100;
   // Grand total is always: total (with or without extracted tax) - discount
-  const grandTotal = total - discountAmount;
+  const grandTotal = taxIncluded
+    ? total - discountAmount
+    : total - discountAmount + parseFloat(taxAmount);
   const billNumber = 'BILL-' + Math.floor(100000 + Math.random() * 900000);
   const currentDate = new Date().toLocaleDateString();
   const currentTime = new Date().toLocaleTimeString();
@@ -673,6 +675,7 @@ const styles = {
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#DA7320',
+    textAlign: 'center',
   },
   optionButtonActive: {
     backgroundColor: '#2a4a2a',
@@ -682,6 +685,7 @@ const styles = {
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
   },
   noPrinterBox: {
     backgroundColor: '#5a3030',
@@ -1018,6 +1022,7 @@ const styles = {
   },
   paymentOptionTextSelected: {
     color: '#DA7320',
+    textAlignL: 'center',
   },
   // QR Code Styles
   qrSection: {

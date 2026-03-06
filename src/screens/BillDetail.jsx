@@ -137,12 +137,6 @@ export default function BillDetail({ route, navigation }) {
             </View>
           </View>
 
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>{t('thankYou')}</Text>
-            <Text style={styles.footerText}>{t('pleaseVisitAgain')}</Text>
-          </View>
-
           {/* QR Code Section */}
           <View style={styles.qrSection}>
             <Text style={styles.qrTitle}>📱 Scan to View Bill</Text>
@@ -157,6 +151,12 @@ export default function BillDetail({ route, navigation }) {
                 backgroundColor="#fff"
               />
             </View>
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>{t('thankYou')}</Text>
+            <Text style={styles.footerText}>{t('pleaseVisitAgain')}</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

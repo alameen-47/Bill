@@ -79,7 +79,6 @@ export default function HomeScreen({ navigation }) {
           : result
         : getLast5Bills(),
     );
-    console.log('Searching for:', result);
   };
 
   return (

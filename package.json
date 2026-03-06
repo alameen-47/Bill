@@ -10,7 +10,10 @@
     "start": "react-native start",
     "test": "jest",
     "backend": "cd backend && nodemon src/server.js",
-    "dev": "concurrently \"npm run backend\" \"npm run android\" \"npm run ios\""
+    "dev": "concurrently \"npm run backend\" \"npm run android\" \"npm run ios\"",
+    "install:backend": "cd backend && npm install",
+    "postinstall": "npm run install:backend",
+    "build": "npm install && npm run install:backend"
   },
   "dependencies": {
     "@ant-design/icons-react-native": "^2.3.2",

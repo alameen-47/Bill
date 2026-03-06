@@ -32,7 +32,6 @@ export default function Settings() {
       await AsyncStorage.removeItem('auth');
       setAuth(null);
       await AsyncStorage.clear();
-      console.log('Async Stored Data Removed Successfully');
     } catch (error) {
       console.log(error.message || 'Error in logout function');
     }

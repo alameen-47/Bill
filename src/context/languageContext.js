@@ -54,6 +54,8 @@ const translations = {
     printerNotConnected: 'Printer not connected',
     applyDiscount: 'Apply Discount',
     selectPaymentMethod: 'Select Payment Method',
+    taxIncluded: 'Tax Included',
+    taxExcluded: 'Tax Excluded',
     thankYou: 'Thank you for shopping!',
     pleaseVisitAgain: 'Please visit again!',
 
@@ -157,6 +159,8 @@ const translations = {
     printerNotConnected: 'الطابعة غير متصلة',
     applyDiscount: 'تطبيق الخصم',
     selectPaymentMethod: 'اختر طريقة الدفع',
+    taxIncluded: 'شامل الضريبة',
+    taxExcluded: 'غير شامل الضريبة',
     thankYou: 'شكراً لتسوقك معنا!',
     pleaseVisitAgain: 'نرجو زيارتنا مرة أخرى!',
     // Reports
@@ -259,6 +263,8 @@ const translations = {
     printerNotConnected: 'प्रिंटर कनेक्ट नहीं है',
     applyDiscount: 'छूट लागू करें',
     selectPaymentMethod: 'भुगतान तरीका चुनें',
+    taxIncluded: 'कर सहित',
+    taxExcluded: 'कर बिना',
     thankYou: 'खरीदारी के लिए धन्यवाद!',
     pleaseVisitAgain: 'कृपया फिर से आएं!',
 
@@ -362,6 +368,8 @@ const translations = {
     printerNotConnected: 'പ്രിന്ററിന് കണക്ഷനില്ല',
     applyDiscount: 'ഇളവ് ബാധകമാക്കുക',
     selectPaymentMethod: 'പണമടക്കൽ രീതി തിരഞ്ഞെടുക്കുക',
+    taxIncluded: 'നികുതി ഉൾപ്പെടുത്തി',
+    taxExcluded: 'നികുതിയില്ല',
     thankYou: 'ഷോപ്പിങ്ങിന് നന്ദി!',
     pleaseVisitAgain: 'ദയവായി വീണ്ടും വരുക!',
 
@@ -465,6 +473,8 @@ const translations = {
     printerNotConnected: 'பிரிண்டர் இணைக்கப்படவில்லை',
     applyDiscount: 'தள்ளுபடி விண்ணப்பி',
     selectPaymentMethod: 'பணம் செலுத்தும் முறையைத் தேர்வுசெய்',
+    taxIncluded: 'வரி சேர்க்கப்பட்டது',
+    taxExcluded: 'வரி இல்லை',
     thankYou: 'ஷாப்பிங்கிற்கு நன்றி!',
     pleaseVisitAgain: 'மீண்டும் வருக!',
 
@@ -564,6 +574,8 @@ const translations = {
     printerNotConnected: 'ప్రింటర్ కనెక్ట్ కాలేదు',
     applyDiscount: 'డిస్కౌంట్ వర్తించు',
     selectPaymentMethod: 'చెల్లింపు విధానం ఎంచుకోండి',
+    taxIncluded: 'Tax Included (Telugu)',
+    taxExcluded: 'Tax Excluded (Telugu)',
     thankYou: 'కొనుగోలు చేసినందుకు ధన్యవాదాలు!',
     pleaseVisitAgain: 'మళ్లీ విచ్చేయండి!',
 
@@ -660,6 +672,8 @@ const translations = {
     printerNotConnected: 'প্রিন্টার কানেক্টেড নেই',
     applyDiscount: 'ছাড় প্রয়োগ',
     selectPaymentMethod: 'পেমেন্ট মেথড নির্বাচন',
+    taxIncluded: 'कर সহ',
+    taxExcluded: 'कर ছাড়া',
     thankYou: 'কেনাকাটার জন্য ধন্যবাদ!',
     pleaseVisitAgain: 'আবার আসুন!',
 
@@ -762,6 +776,8 @@ const translations = {
     printerNotConnected: 'ಪ್ರಿಂಟರ್ ಸಂಪರ್ಕಗೊಂಡಿಲ್ಲ',
     applyDiscount: 'ರಿಯಾಯಿತಿ ಅನ್ವಯಿಸಿ',
     selectPaymentMethod: 'ಪಾವತಿ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    taxIncluded: 'Tax Included (Kannada)',
+    taxExcluded: 'Tax Excluded (Kannada)',
     thankYou: 'ಖರೀದಿಗೆ ಧನ್ಯವಾದಗಳು!',
     pleaseVisitAgain: 'ಮತ್ತೆ ಭೇಟಿ ನೀಡಿ!',
 
