@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'http://192.168.1.103:8000';
+const SERVER_URL = 'http://192.168.1.105:8000';
 
 export default function Reciept() {
   const qrRef = useRef();
@@ -40,6 +40,7 @@ export default function Reciept() {
   const [shopPhone, setShopPhone] = useState('+91 9876543210');
   const [gstNumber, setGstNumber] = useState('');
   const [taxRate, setTaxRate] = useState('0');
+  const [taxIncluded, setTaxIncluded] = useState(false);
   const [shopLogo, setShopLogo] = useState(null);
   // Discount state
   const [discountPercent, setDiscountPercent] = useState('0');
@@ -74,10 +75,22 @@ export default function Reciept() {
   };
 
   // Calculate tax and totals
-  const taxAmount = (total * (parseFloat(taxRate) || 0)) / 100;
-  const discountAmount = (total * (parseFloat(discountPercent) || 0)) / 100;
-  const grandTotal = total + taxAmount - discountAmount;
+  const getTaxAmount = () => {
+    const rate = parseFloat(taxRate) || 0;
+    if (taxIncluded) {
+      // Tax is included in prices - extract it
+      // Formula: taxAmount = total - (total / (1 + rate/100))
+      return total - total / (1 + rate / 100);
+    } else {
+      // Tax is not included - add it on top
+      return (total * rate) / 100;
+    }
+  };
 
+  const taxAmount = getTaxAmount();
+  const discountAmount = (total * (parseFloat(discountPercent) || 0)) / 100;
+  // Grand total is always: total (with or without extracted tax) - discount
+  const grandTotal = total - discountAmount;
   const billNumber = 'BILL-' + Math.floor(100000 + Math.random() * 900000);
   const currentDate = new Date().toLocaleDateString();
   const currentTime = new Date().toLocaleTimeString();
@@ -125,11 +138,21 @@ export default function Reciept() {
       console.log('Logo print error:', error);
       // Fallback: print shop name
       try {
-        await connectedPrinter.write('\x1B\x40'); // ESC @
-        await connectedPrinter.write(ESC + 'a' + '\x01');
-        await connectedPrinter.write(ESC + '!' + '\x30');
-        await connectedPrinter.write(shopName.toUpperCase() + LF);
-        await connectedPrinter.write(ESC + '!' + '\x00');
+        await connectedPrinter.write('\x1B\x40'); // Initialize printer
+
+        await connectedPrinter.write('\x1B\x61\x01'); // Center align
+
+        await connectedPrinter.write('\x1B\x45\x01'); // Bold ON
+
+        await connectedPrinter.write('\x1D\x21\x11'); // Double width + height
+
+        await connectedPrinter.write(shopName.toUpperCase() + '\n');
+
+        await connectedPrinter.write('\x1D\x21\x00'); // Normal size
+
+        await connectedPrinter.write('\x1B\x45\x00'); // Bold OFF
+
+        await connectedPrinter.write('\n');
       } catch (fallbackError) {
         console.log('Fallback logo print error:', fallbackError);
       }
@@ -138,8 +161,6 @@ export default function Reciept() {
 
   const generateReceiptText = () => {
     let receipt = '';
-    receipt += ' \n\n';
-
     receipt += `  ${shopAddress}\n`;
     receipt += `  Phone: ${shopPhone}\n`;
     receipt += '------------------------\n';
@@ -165,7 +186,8 @@ export default function Reciept() {
     receipt += '------------------------\n';
     receipt += `SubTotal:- ${total.toFixed(2)}\n`;
     if (parseFloat(taxRate) > 0) {
-      receipt += `Tax (${taxRate}%):-  ${taxAmount.toFixed(2)}\n`;
+      const taxLabel = taxIncluded ? 'Tax (Incl.)' : 'Tax';
+      receipt += `${taxLabel} (${taxRate}%):-  ${taxAmount.toFixed(2)}\n`;
     }
     if (parseFloat(discountPercent) > 0) {
       receipt += `Discount (${discountPercent}%):- ${discountAmount.toFixed(2)}\n`;
@@ -182,100 +204,11 @@ export default function Reciept() {
     return receipt;
   };
 
-  // // Print QR Code using proper ESC/POS commands
-  // const printQRCode = async qrData => {
-  //   if (!connectedPrinter) return;
-
-  //   const ESC = '\x1B';
-  //   const GS = '\x1D';
-  //   let success = false;
-
-  //   // Method 1: Try ESC/POS QR code commands with correct byte sequences
-  //   try {
-  //     // ESC/POS QR Code Commands:
-  //     // 1. GS k m - Set QR Code Model (m=0x01 for Model 2)
-  //     await connectedPrinter.write(GS + 'k' + '\x01');
-
-  //     // 2. GS k n - Set QR Code Size (n = 3-16, recommended 6)
-  //     await connectedPrinter.write(GS + 'k' + '\x06');
-
-  //     // 3. GS k m n - Set Error Correction Level (m=0x43='C', n=0x00-0x03)
-  //     // 0x00=L, 0x01=M, 0x02=Q, 0x03=H
-  //     await connectedPrinter.write(GS + 'k' + 'C' + '\x03');
-
-  //     // 4. GS k p nL nH d1...dk - Store QR Code Data
-  //     // p = 0x31 (auto encoding mode)
-  //     const dataLength = qrData.length;
-  //     const nL = dataLength & 0xFF;
-  //     const nH = (dataLength >> 8) & 0xFF;
-
-  //     const storeCmd = GS + 'k' + '1' + String.fromCharCode(nL) + String.fromCharCode(nH) + qrData;
-  //     await connectedPrinter.write(storeCmd);
-
-  //     // 5. GS k m - Print QR Code (m = 0)
-  //     await connectedPrinter.write(GS + 'k' + '\x00');
-
-  //     // Line feeds
-  //     await connectedPrinter.write('\x0A\x0A');
-  //     success = true;
-  //     console.log('QR Code printed via ESC/POS Method 1');
-  //   } catch (escError) {
-  //     console.log('ESC/POS QR print error (Method 1):', escError);
-  //   }
-
-  //   // Method 2: Try simpler raw byte approach
-  //   if (!success) {
-  //     try {
-  //       // Build command as pure bytes using String.fromCharCode
-  //       let cmd = '';
-  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x01); // Model 2
-  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x06); // Size 6
-  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x43, 0x03); // Error correction H
-
-  //       const dlen = qrData.length;
-  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x31, dlen % 256, Math.floor(dlen / 256));
-  //       cmd += qrData;
-  //       cmd += String.fromCharCode(0x1D, 0x6B, 0x00); // Print
-  //       cmd += '\x0A\x0A';
-
-  //       await connectedPrinter.write(cmd);
-  //       success = true;
-  //       console.log('QR Code printed via Method 2 (raw bytes)');
-  //     } catch (escError2) {
-  //       console.log('ESC/POS QR print error (Method 2):', escError2);
-  //     }
-  //   }
-
-  //   // Method 3: Try using printImage if available (convert QR to image first)
-  //   if (!success && connectedPrinter.printImage) {
-  //     try {
-  //       // Since we can't easily get the QR as base64, try generating it
-  //       // This is a fallback that requires additional libraries in a real app
-  //       console.log('QR printImage method not available, trying other methods');
-  //     } catch (imgError) {
-  //       console.log('QR image print error:', imgError);
-  //     }
-  //   }
-
-  //   // Fallback: Print URL as text if all QR methods fail
-  //   if (!success) {
-  //     try {
-  //       await connectedPrinter.write('\n');
-  //       await connectedPrinter.write('   📱 Scan for Digital Bill   \n');
-  //       await connectedPrinter.write('   ' + qrData + '\n');
-  //       await connectedPrinter.write('\n');
-  //       console.log('Printed QR URL as text fallback');
-  //     } catch (fallbackError) {
-  //       console.log('QR text fallback error:', fallbackError);
-  //     }
-  //   }
-  // };
   const printQRCode = async qrData => {
     if (!connectedPrinter) return;
 
     try {
       const GS = '\x1D';
-
       const storeLen = qrData.length + 3;
       const pL = storeLen % 256;
       const pH = Math.floor(storeLen / 256);
@@ -353,6 +286,7 @@ export default function Reciept() {
         items: billItems,
         subTotal: total,
         tax: taxAmount,
+        taxIncluded,
         discount: discountAmount,
         grandTotal,
         paymentMethod,
@@ -415,6 +349,20 @@ export default function Reciept() {
 
             {/* Options Row */}
             <View style={styles.optionsRow}>
+              {/* Tax Toggle Button */}
+              <TouchableOpacity
+                style={[
+                  styles.optionButton,
+                  taxIncluded && styles.optionButtonActive,
+                ]}
+                onPress={() => setTaxIncluded(!taxIncluded)}
+              >
+                <Text style={styles.optionButtonText}>
+                  {taxIncluded ? '✅ ' : '➖ '}
+                  {taxIncluded ? t('taxIncluded') : t('taxExcluded')}
+                </Text>
+              </TouchableOpacity>
+
               {/* Discount Button */}
               <TouchableOpacity
                 style={styles.optionButton}
@@ -442,7 +390,6 @@ export default function Reciept() {
                 </Text>
               </TouchableOpacity>
             </View>
-
             <ScrollView
               style={{ width: '100%', marginTop: 10 }}
               showsVerticalScrollIndicator={false}
@@ -515,6 +462,7 @@ export default function Reciept() {
                   <View style={styles.totalRow}>
                     <Text style={styles.totalLabel}>
                       {t('tax')} ({taxRate}%):
+                      {taxIncluded ? ' (Included)' : ''}
                     </Text>
                     <Text style={styles.totalValue}>
                       ₹{taxAmount.toFixed(2)}
@@ -725,6 +673,10 @@ const styles = {
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#DA7320',
+  },
+  optionButtonActive: {
+    backgroundColor: '#2a4a2a',
+    borderColor: '#2ecc71',
   },
   optionButtonText: {
     color: 'white',
