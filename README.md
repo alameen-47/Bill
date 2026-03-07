@@ -1,97 +1,215 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Bill - Smart Billing & Receipt Management App
 
-# Getting Started
+<div align="center">
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+![Bill App](https://img.shields.io/badge/React%20Native-0.81.1-blue)
+![Platform-Android](https://img.shields.io/badge/Platform-Android-green)
+![Platform-iOS](https://img.shields.io/badge/Platform-iOS-gray)
+![License-MIT](https://img.shields.io/badge/License-MIT-yellow)
 
-## Step 1: Start Metro
+</div>
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📱 Overview
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+**Bill** is a powerful mobile application for businesses to create, manage, and print bills and receipts. With integrated Bluetooth thermal printer support, you can instantly print professional receipts directly from your mobile device.
 
-```sh
-# Using npm
-npm start
+## ✨ Key Features
 
-# OR using Yarn
-yarn start
+### 🧾 Bill Management
+- Create new bills with ease
+- Add multiple products to a single bill
+- Automatic total calculation with tax support
+- View all bills history
+- Search and filter bills by date, customer, or amount
+
+### 📦 Product Management
+- Add, edit, and delete products
+- Organize products into categories
+- Set custom prices and product codes
+- Track product inventory
+
+### 🖨️ Receipt Printing
+- Connect via Bluetooth thermal printer
+- Print professional receipts instantly
+- Customizable receipt templates
+- QR code support on receipts
+
+### 📊 Reports & Analytics
+- Daily, weekly, and monthly sales reports
+- Visual graphs and charts
+- Export data for accounting
+
+### 👥 User Management
+- Secure authentication system
+- User profiles with settings
+- Password recovery functionality
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- **Node.js**: v20 or higher
+- **npm** or **yarn**
+- **Android Studio** (for Android development)
+- **Xcode** (for iOS development)
+- **React Native CLI** installed globally
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Bill
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+   
+   This will automatically install backend dependencies as well.
+
+3. **Start the backend server**
+   ```bash
+   # Terminal 1 - Start backend
+   npm run backend
+   ```
+
+4. **Run the app**
+   
+   For Android:
+   ```bash
+   npm run android
+   ```
+   
+   For iOS:
+   ```bash
+   npm run ios
+   ```
+
+### Environment Setup
+
+#### Backend Configuration
+The backend is located in the `/backend` directory. It uses MongoDB for data storage.
+
+Create a `.env` file in the backend directory:
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/billapp
+JWT_SECRET=your_secret_key_here
 ```
 
-## Step 2: Build and run your app
+#### Database Setup
+- Install MongoDB locally or use MongoDB Atlas
+- Update the connection string in `backend/src/config/db.js`
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## 📁 Project Structure
 
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```
+Bill/
+├── android/                 # Android native code
+├── ios/                     # iOS native code
+├── src/                     # React Native source code
+│   ├── api/               # API configuration
+│   ├── assets/            # Images and icons
+│   ├── components/        # Reusable UI components
+│   ├── context/           # React Context providers
+│   ├── navigation/        # Navigation configuration
+│   ├── reciept/           # Receipt templates
+│   ├── screens/           # App screens
+│   └── utilities/         # Utility functions
+├── backend/               # Node.js backend
+│   └── src/
+│       ├── config/       # Database configuration
+│       ├── controllers/  # Route controllers
+│       ├── models/       # Mongoose models
+│       ├── routes/       # API routes
+│       └── middlewares/  # Auth middleware
+├── app.json               # App configuration
+├── package.json           # Dependencies
+└── README.md             # This file
 ```
 
-### iOS
+## 🛠️ Technology Stack
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+### Frontend
+- **React Native** 0.81.1 - Cross-platform mobile framework
+- **React Navigation** - Navigation system
+- **NativeWind** - Tailwind CSS for React Native
+- **Ant Design** - UI components
+- **React Native Vector Icons** - Icon library
+- **React Native Bluetooth Classic** - Bluetooth connectivity
+- **React Native Thermal Printer** - Receipt printing
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB ODM
+- **JSON Web Token** - Authentication
 
-```sh
-bundle install
+## 📱 App Screens
+
+| Screen | Description |
+|--------|-------------|
+| Login | User authentication |
+| Signup | New user registration |
+| Home | Dashboard with quick actions |
+| New Bill | Create new bills |
+| All Bills | View bill history |
+| Products | Manage product inventory |
+| Add Product | Add new products |
+| Reports | Sales analytics |
+| Settings | App configuration |
+| Profile | User profile management |
+
+## 🔧 Configuration
+
+### Android Build
+
+For release builds, update `android/app/build.gradle`:
+```gradle
+android {
+    defaultConfig {
+        versionCode 2        // Increment for each release
+        versionName "1.0.1"  // User-visible version
+    }
+}
 ```
 
-Then, and every time you update your native dependencies, run:
+### Bluetooth Printer Setup
 
-```sh
-bundle exec pod install
-```
+1. Ensure Bluetooth is enabled on your device
+2. Pair your thermal printer with Android/iOS
+3. In app Settings, scan for available printers
+4. Select and connect to your printer
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## 📄 License
 
-```sh
-# Using npm
-npm run ios
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-# OR using Yarn
-yarn ios
-```
+## 🙏 Acknowledgments
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+- [React Native](https://reactnative.dev)
+- [Ant Design](https://reactnative.ant.design)
+- [React Navigation](https://reactnavigation.org)
+- [MongoDB](https://www.mongodb.com)
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 📞 Support
 
-## Step 3: Modify your app
+If you encounter any issues or have questions:
 
-Now that you have successfully run the app, let's make changes!
+1. Check the [Troubleshooting Guide](#) (coming soon)
+2. Open an issue on GitHub
+3. Email: support@billapp.com
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+---
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+<div align="center">
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+**Made with ❤️ for businesses everywhere**
 
-## Congratulations! :tada:
+</div>
 
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
