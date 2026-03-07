@@ -1,4 +1,5 @@
 {
   "name": "Bill",
-  "displayName": "Bill"
+  "displayName": "Bill",
+  "icon": "./app_icon.png"
 }
