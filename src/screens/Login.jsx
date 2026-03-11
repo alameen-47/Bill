@@ -1,4 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import React, { useState } from 'react';
 import {
   widthPercentageToDP as wp,
@@ -107,7 +114,6 @@ export default function Login() {
       <Text style={{ fontSize: wp('13%'), color: 'white', fontWeight: '600' }}>
         Login
       </Text>
-
       <View
         style={{
           gap: wp('8%'),
@@ -125,7 +131,7 @@ export default function Login() {
               marginBottom: 8,
             }}
           >
-            Mobile/Email
+            Email
           </Text>
           <TextInput
             style={{
@@ -257,32 +263,34 @@ export default function Login() {
           </TouchableOpacity>
         )}
 
-        <Text
-          onPress={() => navigation.navigate('ForgotPassword')}
-          style={{
-            fontSize: wp('5%'),
-            color: '#9C9E9C',
-            fontWeight: '600',
-            textDecorationLine: 'underline',
-            textAlign: 'center',
-          }}
-        >
-          Forgot Password?
-        </Text>
+        <View className='flex-row gap-8'>
+          <Text
+            onPress={() => navigation.navigate('ForgotPassword')}
+            style={{
+              fontSize: wp('5%'),
+              color: '#9C9E9C',
+              fontWeight: '600',
+              textDecorationLine: 'underline',
+              textAlign: 'center',
+            }}
+          >
+            Forgot Password?
+          </Text>
 
-        <Text
-          onPress={() => navigation.navigate('SignUp')}
-          style={{
-            fontSize: wp('5%'),
-            color: '#9C9E9C',
-            fontWeight: '600',
-            textDecorationLine: 'underline',
-            textAlign: 'center',
-          }}
-        >
-          Sign Up
-        </Text>
-
+          <Text
+            onPress={() => navigation.navigate('SignUp')}
+            style={{
+              fontSize: wp('5%'),
+              color: '#9C9E9C',
+              fontWeight: '600',
+              textDecorationLine: 'underline',
+              textAlign: 'center',
+            }}
+          >
+            Sign Up
+          </Text>
+        </View>
+        {/* 
         <Text
           onPress={() => navigation.navigate('PrivacyPolicy')}
           style={{
@@ -295,8 +303,8 @@ export default function Login() {
           }}
         >
           Privacy Policy
-        </Text>
-
+        </Text> */}
+        {loading ? <ActivityIndicator /> : null}
         <TouchableOpacity
           onPress={() =>
             loginMode === 'password' ? loginWithPassword() : verifyLoginOTP()
@@ -319,7 +327,7 @@ export default function Login() {
               textAlign: 'center',
             }}
           >
-            {loading ? 'Please wait...' : 'Login'}
+            Login
           </Text>
         </TouchableOpacity>
       </View>

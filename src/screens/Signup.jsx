@@ -117,7 +117,7 @@ export default function Signup({ navigation }) {
           />
         </View>
 
-        <View style={{ width: '100%', display: 'hidden' }}>
+        {/* <View style={{ width: '100%', display: 'hidden' }}>
           <Text
             style={{ fontSize: wp('5%'), color: '#9C9E9C', fontWeight: '600' }}
           >
@@ -151,7 +151,7 @@ export default function Signup({ navigation }) {
               />
             ))}
           </View>
-        </View>
+        </View> */}
         <View
           style={{
             flexDirection: 'row',
