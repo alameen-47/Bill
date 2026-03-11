@@ -283,6 +283,20 @@ export default function Login() {
           Sign Up
         </Text>
 
+        <Text
+          onPress={() => navigation.navigate('PrivacyPolicy')}
+          style={{
+            fontSize: wp('4%'),
+            color: '#DA7320',
+            fontWeight: '600',
+            textDecorationLine: 'underline',
+            textAlign: 'center',
+            marginTop: wp('2%'),
+          }}
+        >
+          Privacy Policy
+        </Text>
+
         <TouchableOpacity
           onPress={() =>
             loginMode === 'password' ? loginWithPassword() : verifyLoginOTP()

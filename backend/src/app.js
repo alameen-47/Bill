@@ -21,13 +21,13 @@ app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/bills', billRoutes);
 
 // Serve privacy policy at /bill47/privacy
-app.get('/bill47/privacy', (req, res) => {
+app.get('/api/v1/bill47/privacy', (req, res) => {
   res.sendFile(path.join(__dirname, '../../privacy-policy.html'));
 });
 
 // Redirect root to privacy policy
 app.get('/', (req, res) => {
-  res.redirect('/bill47/privacy');
+  res.redirect('/api/v1/bill47/privacy');
 });
 
 
