@@ -23,6 +23,7 @@ import logo from '../assets/images/logo.png';
 import Toast from 'react-native-toast-message';
 import { pick, isCancel, types } from '@react-native-documents/picker';
 import RNFS from 'react-native-fs';
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 const PROFILE_STORAGE_KEY = '@user_profile';
 
 export default function Profile() {
@@ -86,15 +87,25 @@ export default function Profile() {
 
   const handleLogoUpload = async () => {
     try {
+      // Request permissions with better handling
       if (Platform.OS === 'android') {
-        await PermissionsAndroid.requestMultiple([
+        const storagePermission = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
         ]);
+
+        const readGranted = storagePermission['android.permission.READ_EXTERNAL_STORAGE'] === 'granted';
+        const writeGranted = storagePermission['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted';
+        
+        if (!readGranted || !writeGranted) {
+          Toast.show({ type: 'error', text1: 'Storage permission denied. Cannot access images.' });
+          return;
+        }
       }
 
       const result = await pick({
         type: [types.images],
+        copyTo: 'documentDirectory',
       });
 
       if (result && result[0]) {
@@ -102,21 +113,59 @@ export default function Profile() {
         const logoUri = Platform.OS === 'ios' ? file.fileCopyUri : file.uri;
 
         // Read the image as base64 and store directly in AsyncStorage
-        const base64Data = await RNFS.readFile(logoUri, 'base64');
-        const base64Uri = `data:image/png;base64,${base64Data}`;
+        // Resize and compress image
+        const resizedUri = await ImageResizer.createResizedImage(
+          logoUri,
+          300, // maxWidth
+          300, // maxHeight
+          'JPEG',
+          80, // quality 0-100
+          0, // rotation
+          null, // outputPath
+        );
+
+        if (!resizedUri.uri) {
+          throw new Error('Failed to resize image');
+        }
+
+        // Check file size (<1MB)
+        const fileStat = await RNFS.stat(resizedUri.uri);
+        if (fileStat.size > 1024 * 1024) { // 1MB
+          Toast.show({ type: 'error', text1: 'Image too large. Please choose smaller image (<1MB)' });
+          return;
+        }
+
+        const base64Data = await RNFS.readFile(resizedUri.uri, 'base64');
+        const base64Uri = `data:image/jpeg;base64,${base64Data}`;
 
         setShopLogo(base64Uri);
+
+        // Auto-save logo to AsyncStorage immediately
+        const currentProfile = await AsyncStorage.getItem(PROFILE_STORAGE_KEY) || '{}';
+        const profileData = JSON.parse(currentProfile);
+        profileData.shopLogo = base64Uri;
+        await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profileData));
+
         Toast.show({
           type: 'success',
-          text1: 'Logo uploaded successfully! ✅',
+          text1: 'Logo uploaded, optimized & saved! ✅',
         });
+
+        // Cleanup temp file on iOS
+        if (Platform.OS === 'ios' && resizedUri.uri.startsWith('file://')) {
+          await RNFS.unlink(resizedUri.uri).catch(console.log);
+        }
       }
     } catch (err) {
+      console.log('Logo upload error:', err);
       if (isCancel(err)) {
-        console.log('User cancelled document picker');
+        console.log('User cancelled');
+      } else if (err.message?.includes('resize')) {
+        Toast.show({ type: 'error', text1: 'Image processing failed. Try smaller image.' });
+      } else if (err.code === 'EACCESS') {
+        Toast.show({ type: 'error', text1: 'Permission denied. Check storage access.' });
       } else {
-        console.log('Error picking document:', err);
-        Toast.show({ type: 'error', text1: 'Failed to upload logo ❌' });
+        Toast.show({ type: 'error', text1: `Upload failed: ${err.message || 'Unknown error'}` });
       }
     }
   };

@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const PROFILE_STORAGE_KEY = '@user_profile';
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'https://bill-h3p1.onrender.com/';
+const SERVER_URL = 'https://bill-h3p1.onrender.com';
 
 export default function Reciept() {
   const qrRef = useRef();
@@ -279,7 +279,7 @@ export default function Reciept() {
       await connectedPrinter.write(receiptText);
 
       // Print QR Code
-      const qrUrl = `${SERVER_URL}/api/v1/bills/${billNumber}/pdf`;
+const qrUrl = `${SERVER_URL}/api/v1/bills/${billNumber}/pdf`;
       await printQRCode(qrUrl);
 
       // Save bill to AsyncStorage after successful print
@@ -513,7 +513,7 @@ export default function Reciept() {
                   <View style={styles.qrContainer}>
                     <QRCode
                       getRef={qrRef}
-                      value={`${SERVER_URL}/api/v1/bills/${billNumber}/pdf`}
+value={`${SERVER_URL}/api/v1/bills/${billNumber}/pdf`}
                       size={120}
                       color="#000"
                       backgroundColor="#fff"

@@ -32,5 +32,4 @@ app.get('/', (req, res) => {
   res.redirect('/api/v1/bill47/privacy');
 });
 
-
 export default app;

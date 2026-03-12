@@ -15,7 +15,7 @@ import { useLanguage } from '../context/languageContext';
 import QRCode from 'react-native-qrcode-svg';
 
 // Backend server URL for QR code - change this to your actual server IP/domain
-const SERVER_URL = 'https://bill-h3p1.onrender.com/';
+const SERVER_URL = 'https://bill-h3p1.onrender.com';
 
 export default function BillDetail({ route, navigation }) {
   const { bill } = route.params;

@@ -87,21 +87,28 @@ export const BillProvider = ({ children }) => {
         time: billData.time,
       };
 
-      // Only save to backend if we have a token (user is logged in)
-      if (token) {
+      // Always save to backend (createBill is public)
+      try {
         const response = await api.post(
           '/api/v1/bills/createBill',
           backendBillData,
-          {
+          token ? {
             headers: { Authorization: `Bearer ${token}` },
-          },
+          } : {},
         );
 
         if (response.data.success) {
-          console.log('Bill saved to backend successfully with user ID');
+          console.log('✅ Bill saved to backend successfully');
+          // Update local bill with backend ID if available
+          if (response.data.bill?._id) {
+            newBill.backendId = response.data.bill._id;
+          }
+        } else {
+          console.log('Backend save warning:', response.data.message);
         }
-      } else {
-        console.log('No token - bill saved locally only');
+      } catch (backendError) {
+        console.warn('Backend save failed:', backendError?.response?.data || backendError.message);
+        // Continue - local save succeeded
       }
     } catch (error) {
       console.log('Error saving bill to backend:', error?.response?.data || error.message);
