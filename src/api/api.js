@@ -71,4 +71,28 @@ export const backupAPI = {
   },
 };
 
+// Product API functions
+export const productAPI = {
+  updateProduct: async (id, data, token) => {
+    const response = await api.put(
+      `/api/v1/products/getSingleProduct/${id}`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    return response.data;
+  },
+
+  deleteProduct: async (id, token) => {
+    const response = await api.delete(
+      `/api/v1/products/deleteSingleProduct/${id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    return response.data;
+  },
+};
+
 export default api;

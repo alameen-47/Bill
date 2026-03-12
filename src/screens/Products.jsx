@@ -10,12 +10,15 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
+import trashIcon from '../assets/icons/trash.png';
+import { productAPI } from '../api/api';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import searchImg from '../assets/icons/search.png';
+import pencil from '../assets/icons/pencil_white.png';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import api from '../api/api';
 import { useAuth } from '../context/authContext';
@@ -28,10 +31,16 @@ export default function Products() {
   const [auth] = useAuth('');
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState('');
-  const [filteredItems, setFilteredItems] = useState('');
-  const [categories, setCategories] = useState('');
-  const [products, setProducts] = useState('');
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    price: '',
+    category: '',
+  });
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCategoryItems, setSelectedCategoryItems] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,10 +50,75 @@ export default function Products() {
   const searchData = search => {
     setSearch(search);
     const query = search.toLowerCase();
-    const result = products.flatMap(product =>
-      product.items.filter(item => item.name.toLowerCase().includes(query)),
+    const result = products.flatMap(cat =>
+      cat.items.filter(item => item.name.toLowerCase().includes(query)),
     );
     setFilteredItems(result);
+  };
+
+  const refreshProducts = () => {
+    fetchProducts();
+    if (selectedCategory) fethCategoryProducts(selectedCategory);
+  };
+
+  const handleEditProduct = product => {
+    setEditingProduct(product);
+    setEditForm({
+      name: product.name,
+      price: product.price.toString(),
+      category: product.category,
+    });
+    setModalVisible(true);
+  };
+
+  const handleUpdateProduct = async () => {
+    if (!editForm.name || !editForm.price || editForm.price <= 0) {
+      Alert.alert('Error', 'Please fill all fields correctly');
+      return;
+    }
+    setUpdateLoading(true);
+    try {
+      const res = await productAPI.updateProduct(
+        editingProduct._id,
+        editForm,
+        auth.token,
+      );
+      if (res.success) {
+        Alert.alert('Success', 'Product updated!');
+        setModalVisible(false);
+        setEditingProduct(null);
+        refreshProducts();
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update product');
+    }
+    setUpdateLoading(false);
+  };
+
+  const handleDeleteProduct = () => {
+    Alert.alert('Confirm Delete', `Delete ${editingProduct.name}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const res = await productAPI.deleteProduct(
+              editingProduct._id,
+              auth.token,
+            );
+            if (res.success) {
+              Alert.alert('Success', 'Product deleted!');
+              setModalVisible(false);
+              setEditingProduct(null);
+              refreshProducts();
+            }
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete product');
+          }
+        },
+      },
+    ]);
   };
 
   //FETCH-PRODUCTS
@@ -231,8 +305,6 @@ export default function Products() {
                 onPress={() => {
                   addItem(item);
                   navigation.goBack();
-                  // setSelectedItem(item);
-                  // setModalVisible(!modalVisible);
                 }}
               >
                 {/* <Text style={styles.image}>{item.emoji}</Text> */}
@@ -261,6 +333,19 @@ export default function Products() {
                   >
                     {item.price}/-
                   </Text>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: '#DA7320',
+                      borderRadius: 10,
+                      padding: 4,
+                    }}
+                    onPress={e => {
+                      e.stopPropagation();
+                      handleEditProduct(item);
+                    }}
+                  >
+                    <Image source={pencil} resizeMode="contain" />
+                  </TouchableOpacity>
                 </View>
               </TouchableOpacity>
             )}
@@ -277,45 +362,97 @@ export default function Products() {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed');
-            setModalVisible(!modalVisible);
-          }}
+          onRequestClose={() => setModalVisible(false)}
         >
-          {selectedItem && (
+          <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Pressable
-                style={styles.closeButton}
-                onPress={() => setModalVisible(!modalVisible)}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: hp(2),
+                }}
               >
-                <Text style={styles.closeText}>🆇 </Text>
-              </Pressable>
-              <View style={styles.imageContainer}>
-                <Text style={styles.image}>{selectedItem.emoji}</Text>
+                <Text
+                  style={{ fontSize: wp(6), color: 'white', fontWeight: '700' }}
+                >
+                  Edit Product
+                </Text>
+                <Pressable
+                  style={styles.closeButton}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setEditingProduct(null);
+                  }}
+                >
+                  <Text style={styles.closeText}>X</Text>
+                </Pressable>
               </View>
-              <Text style={styles.text}>{selectedItem.name}</Text>
-              <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+
+              <View style={{ gap: hp(2), marginBottom: hp(3) }}>
                 <TextInput
-                  style={styles.textInput}
-                  placeholder="AMOUNT /-"
-                  backgroundColor="white"
+                  style={[styles.inputField, { backgroundColor: '#2C2C2C' }]}
+                  placeholder="Product Name"
+                  placeholderTextColor="gray"
+                  value={editForm.name}
+                  onChangeText={text =>
+                    setEditForm(prev => ({ ...prev, name: text }))
+                  }
                 />
+
                 <TextInput
-                  style={styles.textInput}
-                  placeholder="QUANTITY "
-                  backgroundColor="white"
+                  style={[styles.inputField, { backgroundColor: '#2C2C2C' }]}
+                  placeholder="Price (₹)"
+                  placeholderTextColor="gray"
+                  value={editForm.price}
+                  keyboardType="decimal-pad"
+                  onChangeText={text =>
+                    setEditForm(prev => ({ ...prev, price: text }))
+                  }
+                />
+
+                <TextInput
+                  style={[styles.inputField, { backgroundColor: '#2C2C2C' }]}
+                  placeholder="Category"
+                  placeholderTextColor="gray"
+                  value={editForm.category}
+                  onChangeText={text =>
+                    setEditForm(prev => ({ ...prev, category: text }))
+                  }
                 />
               </View>
-              <TextInput
-                style={[styles.textInput, { height: hp(8), margin: 5 }]}
-                placeholder="TOTAL"
-                backgroundColor="white"
-              />
-              <TouchableOpacity style={styles.addButton}>
-                <Text style={styles.buttonText}>ADD</Text>
-              </TouchableOpacity>
+
+              <View style={{ flexDirection: 'row', gap: wp(4) }}>
+                <TouchableOpacity
+                  style={[styles.actionButton, { backgroundColor: '#DA7320' }]}
+                  onPress={handleUpdateProduct}
+                  disabled={updateLoading}
+                >
+                  {updateLoading ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.buttonText}>Update</Text>
+                  )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.actionButton,
+                    { backgroundColor: '#FF4444', flex: 1 },
+                  ]}
+                  onPress={e => {
+                    e.stopPropagation(); // prevents parent click
+                    handleDeleteProduct;
+                  }}
+                >
+                  <Text style={[styles.buttonText, { fontSize: wp(4.5) }]}>
+                    Delete
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
+          </View>
         </Modal>
         {/* ----------------------------------------- */}
       </SafeAreaView>
@@ -366,14 +503,24 @@ const styles = {
     fontSize: wp(20),
     borderRadius: 20,
   },
-  modalContainer: {
-    height: hp(40),
-    display: 'absolute',
-    top: hp(25),
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(153, 147, 147, 1)',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#171717',
     borderRadius: 20,
+    padding: wp(8),
+    width: '90%',
+    maxHeight: hp(60),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 10,
   },
   modalImage: {
     fontSize: wp(25),
@@ -381,27 +528,35 @@ const styles = {
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
+    borderRadius: 1000,
     right: 10,
-    padding: 8,
+    padding: 10,
   },
   closeText: {
-    fontSize: wp(10),
+    fontSize: wp(5),
     fontWeight: 'bold',
     color: 'white',
   },
-  textInput: {
-    width: wp(30),
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: 'black',
+  inputField: {
+    padding: wp(5),
+    borderRadius: 12,
+    fontSize: wp(4.5),
+    color: 'white',
+    borderWidth: 1,
+    borderColor: '#3A3A3A',
+    marginBottom: hp(1.5),
   },
-  addButton: {
-    backgroundColor: '#DA7320',
-    padding: 10,
+  actionButton: {
+    flex: 1,
+    paddingVertical: hp(2.5),
     borderRadius: 15,
-    width: wp(50),
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',

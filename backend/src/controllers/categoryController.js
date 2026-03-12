@@ -13,7 +13,10 @@ export const createCategoryController = async (req, res) => {
     }
 
     // Check if category exists for THIS USER only
-    const existingCategory = await categoryModel.findOne({ category, createdBy: userId });
+    const existingCategory = await categoryModel.findOne({
+      category,
+      createdBy: userId,
+    });
     if (existingCategory) {
       return res.status(400).json({
         success: false,
@@ -22,7 +25,10 @@ export const createCategoryController = async (req, res) => {
     }
 
     // Create category linked to user
-    const newCategory = await categoryModel.create({ category, createdBy: userId });
+    const newCategory = await categoryModel.create({
+      category,
+      createdBy: userId,
+    });
 
     return res.status(201).json({
       success: true,
@@ -42,7 +48,7 @@ export const getSingleCategoryController = async (req, res) => {
   try {
     const { categoryId } = req.params;
     const userId = req.user.id;
-    
+
     if (!categoryId) {
       return res.status(400).json({
         success: false,
@@ -50,7 +56,10 @@ export const getSingleCategoryController = async (req, res) => {
       });
     }
     // Find category belonging to this user
-    const category = await categoryModel.findOne({ _id: categoryId, createdBy: userId });
+    const category = await categoryModel.findOne({
+      _id: categoryId,
+      createdBy: userId,
+    });
     if (category) {
       return res.status(200).json({
         success: true,
@@ -79,15 +88,18 @@ export const deleteCategoryController = async (req, res) => {
       });
     }
     // Delete only if category belongs to this user
-    const deletedCategory = await categoryModel.findOneAndDelete({ _id: categoryId, createdBy: userId });
-    
+    const deletedCategory = await categoryModel.findOneAndDelete({
+      _id: categoryId,
+      createdBy: userId,
+    });
+
     if (!deletedCategory) {
       return res.status(404).json({
         success: false,
         message: 'Category not found or unauthorized',
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       message: 'Category Deleted Succesfully',
@@ -116,4 +128,3 @@ export const getAllCategoryController = async (req, res) => {
     });
   }
 };
-
