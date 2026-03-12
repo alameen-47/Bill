@@ -36,7 +36,7 @@ export default function Settings() {
   const [printers, setPrinters] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
-  
+
   // Backup state
   const [showBackupModal, setShowBackupModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -55,7 +55,7 @@ export default function Settings() {
   // Load backup status from cloud
   const loadBackupStatus = async () => {
     if (!auth?.token) return;
-    
+
     setLoadingStatus(true);
     try {
       const response = await backupAPI.getBackupStatus(auth.token);
@@ -76,12 +76,20 @@ export default function Settings() {
   // Handle backup to cloud + email - automatic
   const handleBackup = async () => {
     if (!auth?.token) {
-      Toast.show({ type: 'error', text1: t('error'), text2: 'Please login to backup data' });
+      Toast.show({
+        type: 'error',
+        text1: t('error'),
+        text2: 'Please login to backup data',
+      });
       return;
     }
 
     if (!auth?.user?.email) {
-      Toast.show({ type: 'error', text1: t('error'), text2: 'No email found in your profile' });
+      Toast.show({
+        type: 'error',
+        text1: t('error'),
+        text2: 'No email found in your profile',
+      });
       return;
     }
 
@@ -89,11 +97,11 @@ export default function Settings() {
     try {
       // Use new cloud backup API
       const response = await backupAPI.saveBackup(auth.token);
-      
+
       if (response.success) {
         // Refresh backup status
         await loadBackupStatus();
-        
+
         Toast.show({
           type: 'success',
           text1: t('backupSent'),
@@ -112,7 +120,8 @@ export default function Settings() {
       Toast.show({
         type: 'error',
         text1: t('backupFailed'),
-        text2: error?.response?.data?.message || error.message || 'Unknown error',
+        text2:
+          error?.response?.data?.message || error.message || 'Unknown error',
       });
     } finally {
       setIsBackingUp(false);
@@ -122,12 +131,20 @@ export default function Settings() {
   // Handle restore from cloud - automatic, no input needed
   const handleRestore = async () => {
     if (!auth?.token) {
-      Toast.show({ type: 'error', text1: t('error'), text2: 'Please login to restore data' });
+      Toast.show({
+        type: 'error',
+        text1: t('error'),
+        text2: 'Please login to restore data',
+      });
       return;
     }
 
     if (!backupStatus?.hasBackup) {
-      Toast.show({ type: 'error', text1: t('error'), text2: 'No backup found. Please create a backup first.' });
+      Toast.show({
+        type: 'error',
+        text1: t('error'),
+        text2: 'No backup found. Please create a backup first.',
+      });
       return;
     }
 
@@ -153,7 +170,7 @@ export default function Settings() {
     setIsRestoring(true);
     try {
       const response = await backupAPI.autoRestore(auth.token);
-      
+
       if (response.success) {
         Toast.show({
           type: 'success',
@@ -173,7 +190,8 @@ export default function Settings() {
       Toast.show({
         type: 'error',
         text1: t('restoreFailed'),
-        text2: error?.response?.data?.message || error.message || 'Unknown error',
+        text2:
+          error?.response?.data?.message || error.message || 'Unknown error',
       });
     } finally {
       setIsRestoring(false);
@@ -387,11 +405,11 @@ export default function Settings() {
             )}
 
             {/* Email Backup Section */}
-            <View style={styles.section}>
+            {/* <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t('emailBackup')}</Text>
-              
-              {/* Backup Card */}
-              <TouchableOpacity
+               */}
+            {/* Backup Card */}
+            {/* <TouchableOpacity
                 style={styles.backupCard}
                 onPress={() => setShowBackupModal(true)}
                 disabled={!auth?.token}
@@ -406,10 +424,10 @@ export default function Settings() {
                   </View>
                   <Text style={styles.backupArrow}>→</Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
-              {/* Restore Card */}
-              <TouchableOpacity
+            {/* Restore Card */}
+            {/* <TouchableOpacity
                 style={[styles.backupCard, styles.restoreCard]}
                 onPress={() => setShowRestoreModal(true)}
                 disabled={!auth?.token}
@@ -424,14 +442,14 @@ export default function Settings() {
                   </View>
                   <Text style={styles.backupArrow}>→</Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
-              {!auth?.token && (
+            {/* {!auth?.token && (
                 <Text style={styles.loginHint}>
                   ⚠️ Please login to use backup features
                 </Text>
               )}
-            </View>
+            </View> */}
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t('printerStatus')}</Text>
@@ -522,7 +540,7 @@ export default function Settings() {
               </Text>
             </TouchableOpacity>
           </View>
-          
+
           {/* Language Selection Modal */}
           <Modal
             visible={showLanguageModal}
@@ -589,16 +607,19 @@ export default function Settings() {
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>📧 {t('backupData')}</Text>
-                
+
                 <View style={styles.userEmailCard}>
-                  <Text style={styles.userEmailLabel}>Backup will be sent to:</Text>
+                  <Text style={styles.userEmailLabel}>
+                    Backup will be sent to:
+                  </Text>
                   <Text style={styles.userEmail}>{auth?.user?.email}</Text>
                 </View>
 
                 <Text style={styles.modalInfoText}>
-                  Your bills, products, and categories will be backed up and sent to your registered email.
+                  Your bills, products, and categories will be backed up and
+                  sent to your registered email.
                 </Text>
-                
+
                 <View style={styles.modalButtons}>
                   <TouchableOpacity
                     style={styles.cancelButton}
@@ -608,9 +629,12 @@ export default function Settings() {
                   >
                     <Text style={styles.cancelButtonText}>{t('cancel')}</Text>
                   </TouchableOpacity>
-                  
+
                   <TouchableOpacity
-                    style={[styles.confirmButton, isBackingUp && styles.disabledButton]}
+                    style={[
+                      styles.confirmButton,
+                      isBackingUp && styles.disabledButton,
+                    ]}
                     onPress={handleBackup}
                     disabled={isBackingUp}
                   >
@@ -637,14 +661,19 @@ export default function Settings() {
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>♻️ {t('restoreData')}</Text>
-                
+
                 {backupStatus?.hasBackup ? (
                   <>
                     <View style={styles.backupInfoCard}>
-                      <Text style={styles.backupInfoTitle}>✓ Cloud Backup Found</Text>
+                      <Text style={styles.backupInfoTitle}>
+                        ✓ Cloud Backup Found
+                      </Text>
                       {backupStatus.lastBackupDate && (
                         <Text style={styles.backupInfoDate}>
-                          Last backup: {new Date(backupStatus.lastBackupDate).toLocaleDateString()}
+                          Last backup:{' '}
+                          {new Date(
+                            backupStatus.lastBackupDate,
+                          ).toLocaleDateString()}
                         </Text>
                       )}
                       {backupStatus.stats && (
@@ -656,14 +685,16 @@ export default function Settings() {
                             📦 Products: {backupStatus.stats.totalProducts || 0}
                           </Text>
                           <Text style={styles.backupStatItem}>
-                            📁 Categories: {backupStatus.stats.totalCategories || 0}
+                            📁 Categories:{' '}
+                            {backupStatus.stats.totalCategories || 0}
                           </Text>
                         </View>
                       )}
                     </View>
 
                     <Text style={styles.modalInfoText}>
-                      Your data will be restored from the cloud backup. Existing data will not be deleted.
+                      Your data will be restored from the cloud backup. Existing
+                      data will not be deleted.
                     </Text>
                   </>
                 ) : (
@@ -674,7 +705,7 @@ export default function Settings() {
                     </Text>
                   </View>
                 )}
-                
+
                 <View style={styles.modalButtons}>
                   <TouchableOpacity
                     style={styles.cancelButton}
@@ -684,10 +715,14 @@ export default function Settings() {
                   >
                     <Text style={styles.cancelButtonText}>{t('cancel')}</Text>
                   </TouchableOpacity>
-                  
+
                   {backupStatus?.hasBackup && (
                     <TouchableOpacity
-                      style={[styles.confirmButton, styles.restoreButton, (isRestoring || loadingStatus) && styles.disabledButton]}
+                      style={[
+                        styles.confirmButton,
+                        styles.restoreButton,
+                        (isRestoring || loadingStatus) && styles.disabledButton,
+                      ]}
                       onPress={handleRestore}
                       disabled={isRestoring || loadingStatus}
                     >
@@ -738,7 +773,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   infoText: { color: 'white', fontSize: 14, marginBottom: 5 },
-  
+
   // Backup Card Styles
   backupCard: {
     backgroundColor: '#2C2C2C',
@@ -1031,4 +1066,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
