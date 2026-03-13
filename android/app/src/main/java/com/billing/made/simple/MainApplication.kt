@@ -1,4 +1,4 @@
-package com.bill47
+package com.billing.made.simple
 
 import android.app.Application
 import com.facebook.react.PackageList
