@@ -1,6 +1,6 @@
 {
   "name": "bill-47-47",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
